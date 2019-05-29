@@ -1,14 +1,15 @@
 package com.example.demo.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,37 +17,28 @@ public class User {
     private long id;
 
     @Column(name = "user_name")
-    @NotNull(message = "user name is required")
-    @Size(min = 2, message = "user name must have at least 2 characters")
     private String userName;
 
     @Column(name = "password")
-    @NotNull(message = "password is required")
-    @Size(min = 6, message = "password must have at least 6 characters")
     private String password;
 
-    @Transient
-    @NotNull(message = "password is required")
-    @Size(min = 6, message = "password must have at least 6 characters")
-    private String matchingPassword;
-
     @Column(name = "first_name")
-    @NotNull(message = "first name is required")
-    @Size(min = 2, message = "first name must have at least 2 characters")
     private String firstName;
 
     @Column(name = "last_name")
-    @NotNull(message = "last name is required")
-    @Size(min = 2, message = "last name must have at least 2 characters")
     private String lastName;
 
     @Column(name = "email")
-    @NotNull(message = "email is required")
-    @Email(message = "Given string is not an email")
     private String email;
 
     @Column(name = "is_active")
     private boolean isActive;
+
+    @Column(name = "create_at")
+    private Date createAt;
+
+    @Column(name = "update_at")
+    private Date updateAt;
 
     public User() {
 
@@ -121,4 +113,68 @@ public class User {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = new Date();
+    }
+
+    // UserDetails methods
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> collections = new ArrayList<>();
+
+        collections.add(new SimpleGrantedAuthority("USER"));
+        collections.add(new SimpleGrantedAuthority("ADMIN"));
+
+        return collections;
+    }
+
+    @Override
+    public String getUsername() {
+        return getUserName();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
 }
