@@ -19,9 +19,9 @@ export const createNewUser = (userRegisterValidator, history) => async dispatch 
     }
 }
 
-export const login = userRegisterValidator => async dispatch => {
+export const login = invalidLoginResponse => async dispatch => {
     try {
-        const res = await axios.post("/login", userRegisterValidator);
+        const res = await axios.post("/login", invalidLoginResponse);
         
         const { token } = res.data;
         localStorage.setItem("jwtToken", token);

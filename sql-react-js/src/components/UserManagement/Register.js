@@ -11,7 +11,7 @@ class Register extends React.Component {
         this.state = {
             userName: '',
             password: '',
-            confirmPassword: '',
+            matchingPassword: '',
             firstName: '',
             lastName: '',
             email: '',
@@ -35,9 +35,9 @@ class Register extends React.Component {
         e.preventDefault();
 
         const userRegisterValidator = {
-            username: this.state.username,
+            userName: this.state.userName,
             password: this.state.password,
-            confirmPassword: this.state.confirmPassword,
+            matchingPassword: this.state.matchingPassword,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             email: this.state.email            
@@ -100,21 +100,21 @@ class Register extends React.Component {
                                     <div className="form-label-group">
                                         <input 
                                             type="password" 
-                                            name="confirmPassword" 
-                                            id="confirmPassword" 
+                                            name="matchingPassword" 
+                                            id="matchingPassword" 
                                             className={classnames("form-control", {
-                                                "is-invalid": errors.confirmPassword
+                                                "is-invalid": errors.matchingPassword
                                             })} 
                                             placeholder="Confirm password" 
-                                            value={this.state.confirmPassword} 
+                                            value={this.state.matchingPassword} 
                                             onChange={this.onChange} 
                                         />
                                         {
                                             errors.confirmPassword && (
-                                                <div className="invalid-feedback">{errors.confirmPassword}</div>
+                                                <div className="invalid-feedback">{errors.matchingPassword}</div>
                                             )
                                         }
-                                        <label htmlFor="confirmPassword">Confirm password</label>
+                                        <label htmlFor="matchingPassword">Confirm password</label>
                                     </div>
 
                                     <div className="form-label-group">

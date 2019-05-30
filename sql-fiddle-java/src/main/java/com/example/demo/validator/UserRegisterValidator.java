@@ -1,6 +1,8 @@
 package com.example.demo.validator;
 
 import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -11,6 +13,9 @@ import javax.validation.constraints.Size;
 
 @Component
 public class UserRegisterValidator implements Validator {
+
+    @Autowired
+    private UserService userService;
 
     @NotNull(message = "user name is required")
     @Size(min = 2, message = "user name must have at least 2 characters")
@@ -109,7 +114,7 @@ public class UserRegisterValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        User user = (User) o;
+        User user = userService.converFromUserValidator((UserRegisterValidator) o);
 
         if(!user.getPassword().equals(user.getMatchingPassword())) {
             errors.rejectValue("matchingPassword", "Match", "Passwords must mach");

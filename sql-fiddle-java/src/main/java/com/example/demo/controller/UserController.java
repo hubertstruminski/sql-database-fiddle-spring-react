@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.User;
+import com.example.demo.exceptions.InvalidLoginResponse;
 import com.example.demo.payload.JwtLoginSuccessResponse;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
@@ -41,7 +42,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserRegisterValidator userValidator, BindingResult result) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody InvalidLoginResponse invalidLoginResponse, BindingResult result) {
         ResponseEntity<?> errorMap = mapErrorValidator.validateToMap(result);
 
         if(errorMap != null) {
@@ -49,7 +50,7 @@ public class UserController {
         }
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userValidator.getUserName(), userValidator.getPassword())
+                new UsernamePasswordAuthenticationToken(invalidLoginResponse.getUserName(), invalidLoginResponse.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
