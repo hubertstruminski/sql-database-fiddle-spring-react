@@ -24,7 +24,7 @@ public class UserService {
         return userRepository.findByUserName(userName);
     }
 
-    public void saveUser(UserRegisterValidator userRegisterValidator) {
+    public User saveUser(UserRegisterValidator userRegisterValidator) {
         User foundedUser = userRepository.findByUserName(userRegisterValidator.getUserName());
 
         if(foundedUser != null) {
@@ -44,7 +44,7 @@ public class UserService {
         user.setActive(true);
         user.setRoles(Arrays.asList(roles));
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User getUserByPasswordAndUsername(String password, String userName) {
