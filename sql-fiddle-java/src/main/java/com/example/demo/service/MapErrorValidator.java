@@ -1,4 +1,4 @@
-package com.example.demo.validator;
+package com.example.demo.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,7 @@ import org.springframework.validation.FieldError;
 import java.util.HashMap;
 import java.util.Map;
 
-// @Service
+@Service
 public class MapErrorValidator {
 
     public ResponseEntity<?> validateToMap(BindingResult bindingResult) {
