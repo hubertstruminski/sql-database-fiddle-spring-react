@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.demo.security.SecurityConstants.EXPIRATION_TIME;
-import static com.example.demo.security.SecurityConstants.SECRET;
+import static com.example.demo.security.SecurityConstants.SECRET_KEY;
 
 @Component
 public class JwtTokenProvider {
@@ -34,13 +34,13 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
             return true;
         } catch(SignatureException e) {
             System.out.println("Invalid JWT Signature");
@@ -57,7 +57,7 @@ public class JwtTokenProvider {
     }
 
     public Long getUserIdFromJwt(String token) {
-        Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         String id = (String) claims.get("id");
 
         return Long.parseLong(id);

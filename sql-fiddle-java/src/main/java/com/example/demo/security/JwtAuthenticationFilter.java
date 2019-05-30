@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.example.demo.security.SecurityConstants.HEADER_STRING;
+import static com.example.demo.security.SecurityConstants.HEADER;
 import static com.example.demo.security.SecurityConstants.TOKEN_PREFIX;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getJwtFromRequest(HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader(HEADER_STRING);
+        String token = httpServletRequest.getHeader(HEADER);
 
         if(StringUtils.hasText(token) && token.startsWith(TOKEN_PREFIX)) {
             return token.substring(7);
