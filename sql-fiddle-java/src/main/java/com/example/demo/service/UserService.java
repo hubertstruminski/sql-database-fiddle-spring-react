@@ -34,8 +34,10 @@ public class UserService {
         Role[] roles = new Role[]{new Role("USER")};
 
         User user = new User();
+
         user.setUserName(userRegisterValidator.getUserName());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setMatchingPassword("");
         user.setFirstName(userRegisterValidator.getFirstName());
         user.setLastName(userRegisterValidator.getLastName());
         user.setEmail(userRegisterValidator.getEmail());

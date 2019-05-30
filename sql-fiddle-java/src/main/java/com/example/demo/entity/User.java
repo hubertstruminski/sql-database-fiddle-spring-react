@@ -22,6 +22,9 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Transient
+    private String matchingPassword;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -144,6 +147,14 @@ public class User implements UserDetails {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getMatchingPassword() {
+        return matchingPassword;
+    }
+
+    public void setMatchingPassword(String matchingPassword) {
+        this.matchingPassword = matchingPassword;
     }
 
     @PrePersist
