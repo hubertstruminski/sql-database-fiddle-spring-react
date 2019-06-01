@@ -44,10 +44,9 @@ function App() {
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />
 `         <Route exact path="/registration" component={Register} />
-        
-          <Switch>
-            <SecuredRoute exact path="/fiddle" component={Board} />
-          </Switch>
+
+          <SecuredRoute exact path="/fiddle" component={Board} />
+ 
         </div>
       </Router>
     </Provider>

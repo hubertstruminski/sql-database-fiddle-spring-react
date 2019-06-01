@@ -17,13 +17,16 @@ class Header extends React.Component {
             <div className="collapse navbar-collapse">
                 <ul className="navbar-nav">
                     <li>
-                        <Link to="/run" className="nav-link">Run</Link>
-                    </li>
-                    <li>
                         <Link to="/save" className="nav-link">Save</Link>
                     </li>
                 </ul>
                 <ul className="navbar-nav navbar-collapse justify-content-end">
+                    <li className="nav-item">
+                        <Link className="nav-link " to="/fiddle">
+                            <i className="fas fa-user-circle mr-1" />
+                            {user.firstName} {user.lastName}
+                        </Link>
+                    </li>
                     <li>
                         <Link to="/logout" className="nav-link" onClick={this.logout.bind(this)}>Logout</Link>
                     </li>
@@ -53,7 +56,7 @@ class Header extends React.Component {
         }
         return (
             <header>
-                <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+                <nav className="navbar navbar-expand-md navbar-dark bg-dark margin">
                     <Link to="/fiddle" className="navbar-brand">SQL Fiddle database</Link>
                     {menu}
                 </nav>
@@ -67,8 +70,7 @@ Header.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    security: state.security,
-
+    security: state.security
 })
 
 export default connect(mapStateToProps, {logout})(Header);

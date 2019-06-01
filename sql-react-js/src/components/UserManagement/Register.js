@@ -15,7 +15,8 @@ class Register extends React.Component {
             firstName: '',
             lastName: '',
             email: '',
-            errors: {}
+            errors: {},
+            successfulWelcomeMessage: false
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -42,6 +43,7 @@ class Register extends React.Component {
             lastName: this.state.lastName,
             email: this.state.email            
         }
+        this.setState({ successfulWelcomeMessage: true });
         this.props.createNewUser(userRegisterValidator, this.props.history);
     }
 
@@ -55,6 +57,9 @@ class Register extends React.Component {
                             <div className="card-body">
                                 <h5 className="card-title text-center">Sign Up</h5>
                                 <hr className="my-4" />
+
+                                <ShowSuccessfulRegistrationMessage successfulWelcomeMessage={this.state.successfulWelcomeMessage} />
+                                
                                 <form onSubmit={this.onSubmit} className="form-signin">
                                     <div className="form-label-group">
                                         <input 
@@ -187,6 +192,13 @@ class Register extends React.Component {
             </div>
         );
     }
+}
+
+function ShowSuccessfulRegistrationMessage(props) {
+    if(props.successfulWelcomeMessage) {
+        return <div className="alert alert-success">User has been registered successfully</div>;
+    }
+    return null;
 }
 
 Register.propTypes = {
