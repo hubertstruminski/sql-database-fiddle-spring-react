@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -40,9 +41,12 @@ public class QueryService {
                 createTable(splittedQueries, i, jdbcTemplate, userName);
             }
             if(splittedQueries[i].contains("INSERT INTO")) {
-                insertQuery(splittedQueries, i, jdbcTemplate, userName);
+                runQuery(splittedQueries, i, jdbcTemplate, userName, "INSERT INTO", 2);
             }
             if(splittedQueries[i].contains("UPDATE")) {
+                runUpdateQuery(splittedQueries, i, jdbcTemplate, userName, "UPDATE", 1);
+            }
+            if(splittedQueries[i].contains("DELETE")) {
 
             }
             if(splittedQueries[i].contains("SELECT")) {
@@ -56,9 +60,9 @@ public class QueryService {
         splittedQueries[i] = splittedQueries[i].substring(index);
 
         String[] splittedCreateTableQuery = splittedQueries[i].split(" ");
-        String buildedTableName = buildTableName(splittedCreateTableQuery, userName);
+        String buildedTableName = buildTableName(splittedCreateTableQuery, userName, 2);
 
-        String createTableQuery = concatenateQuery(splittedCreateTableQuery, buildedTableName);
+        String createTableQuery = concatenateQuery(splittedCreateTableQuery, buildedTableName, 2);
 
         TableQuery table = tableQueryRepository.findByName(buildedTableName);
 
@@ -75,21 +79,75 @@ public class QueryService {
         }
     }
 
-    public void insertQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName) {
-        int index = splittedQueries[i].indexOf("INSERT INTO");
-        splittedQueries[i] = splittedQueries[i].substring(index);
+    public String processQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
+        int startIndex = splittedQueries[i].indexOf(queryType);
+        splittedQueries[i] = splittedQueries[i].substring(startIndex);
         String[] splittedInsertQuery = splittedQueries[i].split(" ");
-        String buildedTableName = buildTableName(splittedInsertQuery, userName);
+        String buildedTableName = buildTableName(splittedInsertQuery, userName, index);
 
-        String insertQuery = concatenateQuery(splittedInsertQuery, buildedTableName);
+        String insertQuery = concatenateQuery(splittedInsertQuery, buildedTableName, index);
 
         TableQuery tableObject = tableQueryRepository.findByName(buildedTableName);
 
         if(tableObject == null) {
-            throw new NoSuchElementException("Name of the table used in INSERT INTO query does not exists");
+            throw new NoSuchElementException("Name of the table used in " + queryType + " query does not exists");
         }
-        jdbcTemplate.update(insertQuery);
+        return insertQuery;
     }
+
+    public void runQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
+        String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
+        jdbcTemplate.execute(query);
+    }
+
+    public void runUpdateQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
+        String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
+
+        Object[] array = computeVariables(query);
+
+        boolean isNumberValue = false;
+        int indexArray = 0;
+        for(int j=0; j<query.length(); j++) {
+
+            int indexFirstApostropheSign = 0;
+            int indexSecondApostropheSign = 0;
+            int indexNumber = 0;
+
+            if(query.charAt(j) == '=') {
+                indexFirstApostropheSign = j + 2;
+
+                String substr = query.substring(indexFirstApostropheSign, indexFirstApostropheSign + 1);
+                if(isNumeric(substr)) {
+                    isNumberValue = true;
+                }
+            }
+
+            if(isNumberValue == false) {
+                if(indexFirstApostropheSign != 0) {
+
+                    for(int k=indexFirstApostropheSign+1; k<query.length(); k++) {
+                        if(indexSecondApostropheSign != 0) {
+                            break;
+                        }
+                        if(query.charAt(k) == '\'') {
+                            indexSecondApostropheSign = k;
+                        }
+                    }
+                    String stringValue = query.substring(indexFirstApostropheSign, indexSecondApostropheSign);
+                    array[indexArray] = stringValue;
+                }
+            } else {
+                for(int l=indexFirstApostropheSign+1; l<query.length(); i++) {
+                    if(query.charAt(l) == ' ') {
+                        indexNumber = l
+                    }
+                }
+            }
+
+            
+        }
+    }
+
 
     public void saveTable(String tableName, String userName) {
         TableQuery tableQueryByName = tableQueryRepository.findByName(tableName);
@@ -112,18 +170,18 @@ public class QueryService {
         tableQueryRepository.save(tableQuery);
     }
 
-    public String buildTableName(String[] splittedCreateTableQuery, String userName) {
-        String tableName = splittedCreateTableQuery[2];
+    public String buildTableName(String[] splittedCreateTableQuery, String userName, int index) {
+        String tableName = splittedCreateTableQuery[index];
 
         StringBuilder builder = new StringBuilder();
         builder.append(tableName).append("_").append(userName);
         return builder.toString();
     }
 
-    public String concatenateQuery(String[] splittedCreateTableQuery, String buildedTableName) {
+    public String concatenateQuery(String[] splittedCreateTableQuery, String buildedTableName, int index) {
         StringBuilder builder = new StringBuilder();
         for(int i=0; i<splittedCreateTableQuery.length; i++) {
-            if(i == 2) {
+            if(i == index) {
                 builder.append(buildedTableName).append(" ");
                 continue;
             }
@@ -131,4 +189,20 @@ public class QueryService {
         }
         return builder.toString();
     }
+
+    public boolean isNumeric(String potentialNumber) {
+        return potentialNumber.matches("-?\\d+(\\.\\d)?");
+    }
+
+    public Object[] computeVariables(String query) {
+        int counter = 0;
+        for(int i=0; i<query.length(); i++) {
+            if(query.charAt(i) == '?') {
+                counter++;
+            }
+        }
+        return new Object[counter];
+    }
+
+
 }
