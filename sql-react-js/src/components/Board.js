@@ -26,8 +26,9 @@ class Board extends React.Component {
 
     onSubmitRun(e) {
         e.preventDefault();
-        console.log(this.state.query);
-        this.props.processQueries(this.state.query, this.props.history);
+        
+        const { user } = this.props.security
+        this.props.processQueries(this.state.query, user, this.props.history);
     }
 
     render() {
@@ -52,7 +53,7 @@ class Board extends React.Component {
                     </form>
                 </div>
                 <div className="red largeClass">
-                    One of three columns
+                    <h1></h1>
                 </div>
             </div>
         );
@@ -60,11 +61,18 @@ class Board extends React.Component {
 }
 
 Board.propTypes = {
-    query: PropTypes.string
+    query: PropTypes.string,
+    security: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
-    query: state.query
+    query: state.query,
+    security: state.security
 })
 
 export default connect(mapStateToProps, { processQueries })(Board);
+
+
+
+
+// export default connect(mapStateToProps, {logout})(Header);

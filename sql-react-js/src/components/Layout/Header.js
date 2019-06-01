@@ -64,6 +64,7 @@ class Header extends React.Component {
         );
     }
 }
+
 Header.propTypes = {
     logout: PropTypes.func.isRequired,
     security: PropTypes.object.isRequired

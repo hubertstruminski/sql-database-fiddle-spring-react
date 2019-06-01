@@ -16,4 +16,10 @@ public class CustomExceptionHandler {
         UsernameAlreadyExistsResponse exceptionResponse = new UsernameAlreadyExistsResponse((ex.getMessage()));
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleTableNameAlreadyExists(TableAlreadyExistsException ex, WebRequest request) {
+        TableAlreadyExistsResponse exceptionResponse = new TableAlreadyExistsResponse((ex.getMessage()));
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }

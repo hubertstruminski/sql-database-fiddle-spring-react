@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TableQueryRepository extends CrudRepository<TableQuery, Long> {
 
+    TableQuery findByName(String name);
 }
