@@ -8,6 +8,7 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -124,51 +125,12 @@ public class QueryService {
     public void runUpdateQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
         String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
 
-        Object[] array = computeVariables(query);
+        Object[] array = algorithmForUpdateQuery(query);
+        parseNumbers(array);
 
-        boolean isNumberValue = false;
-        int indexArray = 0;
-        for(int j=0; j<query.length(); j++) {
+        String updateQueryResult = changeValuesOnQuestionMark(query);
 
-            int indexFirstApostropheSign = 0;
-            int indexSecondApostropheSign = 0;
-            int indexNumber = 0;
-
-            if(query.charAt(j) == '=') {
-                indexFirstApostropheSign = j + 2;
-
-                String substr = query.substring(indexFirstApostropheSign+1, indexFirstApostropheSign + 2);
-                if(isNumeric(substr)) {
-                    isNumberValue = true;
-                }
-            }
-
-            if(isNumberValue == false) {
-                if(indexFirstApostropheSign != 0) {
-
-                    for(int k=indexFirstApostropheSign+1; k<query.length(); k++) {
-                        if(query.charAt(k) == '\'') {
-                            indexSecondApostropheSign = k;
-                            break;
-                        }
-                    }
-                    String stringValue = query.substring(indexFirstApostropheSign + 1, indexSecondApostropheSign);
-                    array[indexArray] = stringValue;
-                    indexArray++;
-                }
-            } else {
-                for(int l=indexFirstApostropheSign+1; l<query.length(); i++) {
-                    if(query.charAt(l) == ' ') {
-                        indexNumber = l;
-                        break;
-                    }
-                }
-                String stringValue = query.substring(indexFirstApostropheSign, indexNumber);
-                array[indexArray] = stringValue;
-                indexArray++;
-            }
-        }
-        jdbcTemplate.update(query, array);
+        jdbcTemplate.update(updateQueryResult, array);
     }
 
 
@@ -227,5 +189,78 @@ public class QueryService {
         return new Object[counter];
     }
 
+    public Object[] algorithmForUpdateQuery(String query) {
+        Object[] array = computeVariables(query);
+
+        boolean isNumberValue = false;
+        int indexArray = 0;
+        for(int j=0; j<query.length(); j++) {
+
+            int indexFirstApostropheSign = 0;
+            int indexSecondApostropheSign = 0;
+            int indexNumber = 0;
+
+            if(query.charAt(j) == '=') {
+                indexFirstApostropheSign = j + 2;
+
+                String potentialNumber = String.valueOf(query.charAt(indexFirstApostropheSign));
+                if(isNumeric(potentialNumber)) {
+                    isNumberValue = true;
+                } else {
+                    String substr = query.substring(indexFirstApostropheSign+1, indexFirstApostropheSign + 2);
+                }
+            }
+
+            if(isNumberValue == false) {
+                if(indexFirstApostropheSign != 0) {
+
+                    for(int k=indexFirstApostropheSign+1; k<query.length(); k++) {
+                        if(query.charAt(k) == '\'') {
+                            indexSecondApostropheSign = k;
+                            break;
+                        }
+                    }
+                    String stringValue = query.substring(indexFirstApostropheSign + 1, indexSecondApostropheSign);
+                    array[indexArray] = stringValue;
+                    indexArray++;
+                }
+            } else {
+                for(int l=indexFirstApostropheSign; l<query.length(); l++) {
+                    if(query.charAt(l) == ' ') {
+                        indexNumber = l;
+                        isNumberValue = false;
+                        break;
+                    }
+                }
+                String stringValue = query.substring(indexFirstApostropheSign, indexNumber);
+                array[indexArray] = stringValue;
+                indexArray++;
+            }
+        }
+        return array;
+    }
+
+    public void parseNumbers(Object[] array) {
+        for(int a=0; a<array.length; a++) {
+            if(isNumeric(String.valueOf(array[a]))) {
+                if(String.valueOf(array[a]).contains(".")) {
+                    array[a] = Double.parseDouble(String.valueOf(array[a]));
+                    continue;
+                }
+                array[a] = Integer.parseInt(String.valueOf(array[a]));
+            }
+        }
+    }
+
+    public String changeValuesOnQuestionMark(String query) {
+        String[] splitUpdateQuery = query.split(" ");
+
+        for(int m=0; m<splitUpdateQuery.length; m++) {
+            if(splitUpdateQuery[m].equals("=")) {
+                splitUpdateQuery[m + 1] = "?";
+            }
+        }
+        return concatenateQuery(splitUpdateQuery, splitUpdateQuery[1], 1);
+    }
 
 }
