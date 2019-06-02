@@ -2,20 +2,20 @@ package com.example.demo.exceptions;
 
 public class InvalidLoginResponse {
 
-    private String username;
+    private String userName;
     private String password;
 
     public InvalidLoginResponse() {
-        this.username = "Invalid username";
+        this.userName = "Invalid userName";
         this.password = "Invalid password";
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

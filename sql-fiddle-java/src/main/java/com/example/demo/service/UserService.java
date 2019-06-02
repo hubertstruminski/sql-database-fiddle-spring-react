@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 
 @Service("userService")
 public class UserService {
@@ -36,12 +37,13 @@ public class UserService {
         User user = new User();
 
         user.setUserName(userRegisterValidator.getUserName());
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(userRegisterValidator.getPassword()));
         user.setMatchingPassword("");
         user.setFirstName(userRegisterValidator.getFirstName());
         user.setLastName(userRegisterValidator.getLastName());
         user.setEmail(userRegisterValidator.getEmail());
         user.setActive(true);
+        user.setCreateAt(new Date());
         user.setRoles(Arrays.asList(roles));
 
         return userRepository.save(user);
@@ -49,5 +51,19 @@ public class UserService {
 
     public User getUserByPasswordAndUsername(String password, String userName) {
         return userRepository.getUserByPasswordAndUserName(password, userName);
+    }
+
+    public User converFromUserValidator(UserRegisterValidator userValidator) {
+        User user = new User();
+
+        user.setUserName(userValidator.getUserName());
+        user.setPassword(userValidator.getPassword());
+        user.setMatchingPassword(userValidator.getMatchingPassword());
+        user.setFirstName(userValidator.getFirstName());
+        user.setLastName(userValidator.getLastName());
+        user.setEmail(userValidator.getEmail());
+        user.setCreateAt(new Date());
+
+        return user;
     }
 }

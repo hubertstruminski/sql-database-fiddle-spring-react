@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.util.*;
 
 @Entity
@@ -50,6 +51,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    List<TableQuery> tables;
 
     public User() {
 
@@ -155,6 +159,14 @@ public class User implements UserDetails {
 
     public void setMatchingPassword(String matchingPassword) {
         this.matchingPassword = matchingPassword;
+    }
+
+    public List<TableQuery> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<TableQuery> tables) {
+        this.tables = tables;
     }
 
     @PrePersist
