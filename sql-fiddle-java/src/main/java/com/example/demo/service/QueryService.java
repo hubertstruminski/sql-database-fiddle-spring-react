@@ -33,6 +33,22 @@ public class QueryService {
         return splittedDecodedQueries;
     }
 
+    public String[] decodeAndSplitUrlForUpdateQuery(String query) throws UnsupportedEncodingException {
+        String decoded = URLDecoder.decode(query, "UTF-8");
+        String replacedString = decoded.replace("\n\t", " ").replace("\n", " ");
+
+        String[] splittedDecodedQueries = replacedString.split(";");
+
+        for(int i=0; i<splittedDecodedQueries.length; i++) {
+            if(splittedDecodedQueries[i].contains("UPDATE")) {
+                splittedDecodedQueries[i] = splittedDecodedQueries[i].substring(0, splittedDecodedQueries[i].length());
+                break;
+            }
+        }
+
+        return splittedDecodedQueries;
+    }
+
     public void manageQueries(String query, JdbcTemplate jdbcTemplate, String userName) throws Exception {
         String[] splittedQueries = decodeAndSplitUrl(query);
 
@@ -44,7 +60,12 @@ public class QueryService {
                 runQuery(splittedQueries, i, jdbcTemplate, userName, "INSERT INTO", 2);
             }
             if(splittedQueries[i].contains("UPDATE")) {
-                runUpdateQuery(splittedQueries, i, jdbcTemplate, userName, "UPDATE", 1);
+                String[] splittedUpdateQueries = decodeAndSplitUrlForUpdateQuery(query);
+                for(int j=0; j<splittedUpdateQueries.length; j++) {
+                    if(splittedUpdateQueries[j].contains("UPDATE")) {
+                        runUpdateQuery(splittedUpdateQueries, j, jdbcTemplate, userName, "UPDATE", 1);
+                    }
+                }
             }
             if(splittedQueries[i].contains("DELETE")) {
 
@@ -116,7 +137,7 @@ public class QueryService {
             if(query.charAt(j) == '=') {
                 indexFirstApostropheSign = j + 2;
 
-                String substr = query.substring(indexFirstApostropheSign, indexFirstApostropheSign + 1);
+                String substr = query.substring(indexFirstApostropheSign+1, indexFirstApostropheSign + 2);
                 if(isNumeric(substr)) {
                     isNumberValue = true;
                 }
@@ -126,26 +147,28 @@ public class QueryService {
                 if(indexFirstApostropheSign != 0) {
 
                     for(int k=indexFirstApostropheSign+1; k<query.length(); k++) {
-                        if(indexSecondApostropheSign != 0) {
-                            break;
-                        }
                         if(query.charAt(k) == '\'') {
                             indexSecondApostropheSign = k;
+                            break;
                         }
                     }
-                    String stringValue = query.substring(indexFirstApostropheSign, indexSecondApostropheSign);
+                    String stringValue = query.substring(indexFirstApostropheSign + 1, indexSecondApostropheSign);
                     array[indexArray] = stringValue;
+                    indexArray++;
                 }
             } else {
                 for(int l=indexFirstApostropheSign+1; l<query.length(); i++) {
                     if(query.charAt(l) == ' ') {
-                        indexNumber = l
+                        indexNumber = l;
+                        break;
                     }
                 }
+                String stringValue = query.substring(indexFirstApostropheSign, indexNumber);
+                array[indexArray] = stringValue;
+                indexArray++;
             }
-
-            
         }
+        jdbcTemplate.update(query, array);
     }
 
 
@@ -197,7 +220,7 @@ public class QueryService {
     public Object[] computeVariables(String query) {
         int counter = 0;
         for(int i=0; i<query.length(); i++) {
-            if(query.charAt(i) == '?') {
+            if(query.charAt(i) == '=') {
                 counter++;
             }
         }
