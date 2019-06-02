@@ -8,11 +8,9 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -69,7 +67,12 @@ public class QueryService {
                 }
             }
             if(splittedQueries[i].contains("DELETE")) {
-
+                String[] splittedDeleteQueries = decodeAndSplitUrlForUpdateQuery(query);
+                for(int j=0; j<splittedDeleteQueries.length; j++) {
+                    if(splittedDeleteQueries[j].contains("DELETE")) {
+                        runUpdateQuery(splittedDeleteQueries, j, jdbcTemplate, userName, "DELETE", 2);
+                    }
+                }
             }
             if(splittedQueries[i].contains("SELECT")) {
 
