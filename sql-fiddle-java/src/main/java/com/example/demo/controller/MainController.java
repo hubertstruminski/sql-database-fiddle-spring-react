@@ -47,4 +47,9 @@ public class MainController {
         return new ResponseEntity<TableQuery>(button, HttpStatus.OK);
     }
 
+    @GetMapping("/table/{id}")
+    public ResponseEntity<?> getTable(@PathVariable Long id, Principal principal) {
+
+    }
+
 }

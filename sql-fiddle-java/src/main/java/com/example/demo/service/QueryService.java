@@ -157,7 +157,7 @@ public class QueryService {
         tableQuery.setUser(user);
         tableQuery.setTableNameBefore(tableNameBefore);
 
-        String selectQuery = "SELECT * FROM " + tableName + ";";
+        String selectQuery = "SELECT * FROM " + tableName;
         tableQuery.setSelectQuery(selectQuery);
 
         tableQueryRepository.save(tableQuery);

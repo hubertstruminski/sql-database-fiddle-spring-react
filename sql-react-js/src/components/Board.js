@@ -24,9 +24,7 @@ class Board extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmitRun(e) {
-        // e.preventDefault();
-
+    onSubmitRun() {
         this.props.processQueries(this.state.query, this.props.history);
     }
 
@@ -35,7 +33,6 @@ class Board extends React.Component {
         console.log(buttons);
         return (
             <div className="box flex-stretch">
-        
                 <div className="mediumClass">
                     <form onSubmit={this.onSubmitRun}>
                         <textarea 

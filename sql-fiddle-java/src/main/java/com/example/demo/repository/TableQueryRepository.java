@@ -13,4 +13,6 @@ public interface TableQueryRepository extends CrudRepository<TableQuery, Long> {
     Iterable<TableQuery> findAllByUser(User user);
 
     TableQuery findByIdAndUser(Long id, User user);
+
+    TableQuery findFirstById(Long id);
 }

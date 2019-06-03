@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { getTable } from '../actions/selectActions';
 
 class TableButton extends React.Component {
     constructor() {
@@ -8,9 +11,10 @@ class TableButton extends React.Component {
     }
 
     onSubmit(e) {
-        e.preventDefault();
-        alert('Hubert Strumiński');
+        const id = button.id;
+        this.props.getTable(id, this.props.history);
     }
+
     render() {
         const { button } = this.props;
         return (
@@ -21,4 +25,12 @@ class TableButton extends React.Component {
     }
 }
 
-export default TableButton;
+TableButton.propTypes = {
+    table: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    table: state.table
+})
+
+export default connect(mapStateToProps, { getTable })(TableButton);
