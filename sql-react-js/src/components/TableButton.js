@@ -11,7 +11,7 @@ class TableButton extends React.Component {
     }
 
     onSubmit(e) {
-        const id = button.id;
+        const id = this.props.button.id;
         this.props.getTable(id, this.props.history);
     }
 

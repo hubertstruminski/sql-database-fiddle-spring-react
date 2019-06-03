@@ -46,6 +46,7 @@ public class MainController {
 
     @GetMapping("/table/{id}")
     public ResponseEntity<?> getTable(@PathVariable Long id, Principal principal) {
+
         return new ResponseEntity<String>("Get mappibng", HttpStatus.OK);
     }
 

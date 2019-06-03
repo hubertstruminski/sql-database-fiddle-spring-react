@@ -15,4 +15,6 @@ public interface TableQueryRepository extends CrudRepository<TableQuery, Long> {
     TableQuery findByIdAndUser(Long id, User user);
 
     TableQuery findFirstById(Long id);
+
+    int findFirstByBuildedName(String buildedTableName);
 }
