@@ -3,6 +3,7 @@ import TableButton from './TableButton';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { processQueries } from '../actions/queryActions';
+import { getButtons } from '../actions/tableActions';
 
 class Board extends React.Component {
     constructor() {
@@ -12,31 +13,26 @@ class Board extends React.Component {
             query: 'Write here your SQL query...'
         }
         this.onChange = this.onChange.bind(this);
-        this.resetField = this.resetField.bind(this);
         this.onSubmitRun = this.onSubmitRun.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.getButtons();
     }
 
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    resetField(e) {
-        this.setState({ query: '' });
-    }
-
-    onSubmitRun(e) {
-        e.preventDefault();
-        
-        const { user } = this.props.security
-        this.props.processQueries(this.state.query, user, this.props.history);
+    onSubmitRun() {
+        this.props.processQueries(this.state.query, this.props.history);
     }
 
     render() {
+        const { buttons } = this.props.button;
+        console.log(buttons);
         return (
             <div className="box flex-stretch">
-                <div className="blue smallClass">
-                    <TableButton />
-                </div>
                 <div className="mediumClass">
                     <form onSubmit={this.onSubmitRun}>
                         <textarea 
@@ -44,13 +40,19 @@ class Board extends React.Component {
                             className="txtArea"
                             value={this.state.query}
                             onChange={this.onChange}
-                            onClick={this.resetField}
                             rows="27"
                         >
                             Write here your SQL queries...
                         </textarea>
                         <input type="submit" value="Run" className="runButton"/>
                     </form>
+                </div>
+                <div className="blue smallClass">
+                    {
+                        buttons.map(button => (
+                            <TableButton key={button.id} button={button} />
+                        ))
+                    }
                 </div>
                 <div className="red largeClass">
                     <h1></h1>
@@ -62,17 +64,13 @@ class Board extends React.Component {
 
 Board.propTypes = {
     query: PropTypes.string,
-    security: PropTypes.object.isRequired
+    button: PropTypes.object.isRequired,
+    getButtons: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
     query: state.query,
-    security: state.security
+    button: state.button
 })
 
-export default connect(mapStateToProps, { processQueries })(Board);
-
-
-
-
-// export default connect(mapStateToProps, {logout})(Header);
+export default connect(mapStateToProps, { processQueries, getButtons })(Board);

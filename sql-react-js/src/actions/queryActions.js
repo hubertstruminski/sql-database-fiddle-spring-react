@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { GET_ERRORS, PROCESS_QUERY } from './types';
 
-export const processQueries = (query, user, history) => async dispatch => {
+export const processQueries = (query, history) => async dispatch => {
     try {
         console.log(query);
-        await axios.post("/fiddle", query, user);
+        await axios.post("/fiddle/run", query);
         history.push("/fiddle");
 
         dispatch({
