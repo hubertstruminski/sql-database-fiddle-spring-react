@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface CustomPropertiesRepository extends CrudRepository<CustomProperties, Long> {
 
-    List<CustomProperties> findAllByUserAndTableQueryOrderByCreate_At(User user, TableQuery tableQuery);
+    Iterable<CustomProperties> findAllByUserAndTableQueryOrderByCreate_AtAsc(User user, TableQuery tableQuery);
+//    List<CustomProperties> findAllByUserAndTableQueryOrderByCreate_AtAsc(User user, TableQuery tableQuery);
 }

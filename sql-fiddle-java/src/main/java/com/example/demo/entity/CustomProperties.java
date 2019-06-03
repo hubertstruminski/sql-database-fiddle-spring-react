@@ -89,4 +89,14 @@ public class CustomProperties {
     public void setCreate_At(Date create_At) {
         this.create_At = create_At;
     }
+
+    public TableQuery getTableQuery() {
+        return tableQuery;
+    }
+
+    public void setTableQuery(TableQuery tableQuery) {
+        this.tableQuery = tableQuery;
+    }
+
+
 }

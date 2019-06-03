@@ -159,6 +159,7 @@ public class QueryService {
             customProperties.setCustomInsert(customInsert);
             customProperties.setCreate_At(new Date());
 
+
             customPropertiesRepository.save(customProperties);
         }
 

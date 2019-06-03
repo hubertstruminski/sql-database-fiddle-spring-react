@@ -9,7 +9,8 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -38,12 +39,29 @@ public class CustomPropertiesService {
             throw new NoSuchElementException("Given table does not exists.");
         }
 
-        List<CustomProperties> customPropertiesList = customPropertiesRepository
-                .findAllByUserAndTableQueryOrderByCreate_At(userByUserName, foundedTableQuery);
+        Iterable<CustomProperties> iterableList = customPropertiesRepository
+                .findAllByUserAndTableQueryOrderByCreate_AtAsc(userByUserName, foundedTableQuery);
+
+        List<CustomProperties> customPropertiesList = convertToList(iterableList);
 
         String buildedTableName = foundedTableQuery.getBuildedName();
         int amountOfColumns = tableQueryRepository.findFirstByBuildedName(buildedTableName);
 
+        return processDataToArray(customPropertiesList, amountOfColumns);
+    }
+
+    private List<CustomProperties> convertToList(Iterable<CustomProperties> iterableList) {
+        Iterator iterator = iterableList.iterator();
+        List<CustomProperties> result = new ArrayList<>();
+
+        while(iterator.hasNext()) {
+            CustomProperties customProp = (CustomProperties) iterator.next();
+            result.add(customProp);
+        }
+        return result;
+    }
+
+    private String[][] processDataToArray(List<CustomProperties> customPropertiesList, int amountOfColumns) {
         int rows = customPropertiesList.size() / amountOfColumns;
         int columns = amountOfColumns;
 
@@ -61,6 +79,4 @@ public class CustomPropertiesService {
         }
         return FieldsAndValuesArray;
     }
-
-
 }

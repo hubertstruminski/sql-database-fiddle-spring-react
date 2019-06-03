@@ -55,7 +55,7 @@ class Board extends React.Component {
                     }
                 </div>
                 <div className="red largeClass">
-                    <h1></h1>
+                    
                 </div>
             </div>
         );
