@@ -52,7 +52,7 @@ public class User implements UserDetails {
     )
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     List<TableQuery> tables;
 
     public User() {

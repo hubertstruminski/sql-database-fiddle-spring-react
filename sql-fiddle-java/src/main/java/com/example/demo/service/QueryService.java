@@ -87,15 +87,16 @@ public class QueryService {
         String[] splittedCreateTableQuery = splittedQueries[i].split(" ");
         String buildedTableName = buildTableName(splittedCreateTableQuery, userName, 2);
 
+        String tableNameBeforeBuild = splittedCreateTableQuery[2];
         String createTableQuery = concatenateQuery(splittedCreateTableQuery, buildedTableName, 2);
 
-        TableQuery table = tableQueryRepository.findByName(buildedTableName);
+        TableQuery table = tableQueryRepository.findByBuildedName(buildedTableName);
 
         if(table != null) {
             String dropTableQUery = "DROP TABLE " + "public." + buildedTableName;
             jdbcTemplate.execute(dropTableQUery);
         } else {
-            saveTable(buildedTableName, userName);
+            saveTable(buildedTableName, userName, tableNameBeforeBuild);
         }
         try {
             jdbcTemplate.execute(createTableQuery);
@@ -112,7 +113,7 @@ public class QueryService {
 
         String insertQuery = concatenateQuery(splittedInsertQuery, buildedTableName, index);
 
-        TableQuery tableObject = tableQueryRepository.findByName(buildedTableName);
+        TableQuery tableObject = tableQueryRepository.findByBuildedName(buildedTableName);
 
         if(tableObject == null) {
             throw new NoSuchElementException("Name of the table used in " + queryType + " query does not exists");
@@ -137,11 +138,11 @@ public class QueryService {
     }
 
 
-    public void saveTable(String tableName, String userName) {
-        TableQuery tableQueryByName = tableQueryRepository.findByName(tableName);
+    public void saveTable(String tableName, String userName, String tableNameBefore) {
+        TableQuery tableQueryByName = tableQueryRepository.findByBuildedName(tableName);
 
         if(tableQueryByName != null) {
-            throw new TableAlreadyExistsException("Table name '" + tableQueryByName.getName() + "' already exists");
+            throw new TableAlreadyExistsException("Table name '" + tableQueryByName.getTableNameBefore() + "' already exists");
         }
 
         User user = userRepository.findByUserName(userName);
@@ -152,8 +153,12 @@ public class QueryService {
 
         TableQuery tableQuery = new TableQuery();
 
-        tableQuery.setName(tableName);
+        tableQuery.setBuildedName(tableName);
         tableQuery.setUser(user);
+        tableQuery.setTableNameBefore(tableNameBefore);
+
+        String selectQuery = "SELECT * FROM " + tableName + ";";
+        tableQuery.setSelectQuery(selectQuery);
 
         tableQueryRepository.save(tableQuery);
     }

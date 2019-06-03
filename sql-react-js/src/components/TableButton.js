@@ -4,9 +4,6 @@ class TableButton extends React.Component {
     constructor() {
         super();
 
-        this.state = {
-
-        }
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -15,9 +12,10 @@ class TableButton extends React.Component {
         alert('Hubert Strumiński');
     }
     render() {
+        const { button } = this.props;
         return (
             <form onSubmit={this.onSubmit}>
-                <input type="submit" className="generatedButton" value="Button" />
+                <input type="submit" className="generatedButton" value={button.tableNameBefore} />
             </form>
         );
     }

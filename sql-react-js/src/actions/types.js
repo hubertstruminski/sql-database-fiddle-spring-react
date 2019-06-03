@@ -3,3 +3,6 @@ export const GET_ERRORS = "GET_ERRORS";
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 export const PROCESS_QUERY = "PROCESS_QUERY";
+
+export const DISPLAY_BUTTONS = "DISPLAY_BUTTONS";
+export const DISPLAY_BUTTON = "DISPLAY_BUTTON";
