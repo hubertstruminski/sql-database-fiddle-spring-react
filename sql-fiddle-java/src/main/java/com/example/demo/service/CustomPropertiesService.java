@@ -25,11 +25,11 @@ public class CustomPropertiesService {
     @Autowired
     private CustomPropertiesRepository customPropertiesRepository;
 
-    public String[][] getTable(Long id, Principal principal) {
-        User userByUserName = userRepository.findByUserName(principal.getName());
+    public String[][] getTable(Long id, String userName) {
+        User userByUserName = userRepository.findByUserName(userName);
 
         if(userByUserName == null) {
-            throw new NoSuchElementException("User '" + principal.getName() + "' does not exists");
+            throw new NoSuchElementException("User '" + userName + "' does not exists");
         }
 
         TableQuery foundedTableQuery = tableQueryRepository.findFirstById(id);
@@ -49,23 +49,17 @@ public class CustomPropertiesService {
 
         String[][] FieldsAndValuesArray = new String[rows + 1][columns];
 
-        for(int i=0; i<rows; i++) {
-            for(int j=0; j<columns; j++) {
-
-            }
-        }
-
         for(int i=0; i<customPropertiesList.size(); i++) {
             if(i == 0) {
                 for(int j=0; j<columns; j++) {
                     FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getField();
                 }
             }
-            if(i % amountOfColumns == 0) {
-                FieldsAndValuesArray
+            for(int j=0; j<columns; j++) {
+                FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getValue();
             }
         }
-
+        return FieldsAndValuesArray;
     }
 
 

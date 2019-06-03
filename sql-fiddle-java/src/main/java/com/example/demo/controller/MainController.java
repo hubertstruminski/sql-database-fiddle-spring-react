@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.entity.TableQuery;
+import com.example.demo.service.CustomPropertiesService;
 import com.example.demo.service.QueryService;
 import com.example.demo.service.TableQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class MainController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private CustomPropertiesService customPropertiesService;
+
     @PostMapping("/run")
     public ResponseEntity<?> processingQueries(@RequestBody String query, Principal principal) throws Exception {
         queryService.manageQueries(query, jdbcTemplate, principal.getName());
@@ -46,8 +50,8 @@ public class MainController {
 
     @GetMapping("/table/{id}")
     public ResponseEntity<?> getTable(@PathVariable Long id, Principal principal) {
-
-        return new ResponseEntity<String>("Get mappibng", HttpStatus.OK);
+        String[][] table = customPropertiesService.getTable(id, principal.getName());
+        return new ResponseEntity<String[][]>(table, HttpStatus.OK);
     }
 
 }
