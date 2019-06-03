@@ -2,17 +2,14 @@ package com.example.demo.controller;
 
 
 import com.example.demo.entity.TableQuery;
-import com.example.demo.entity.User;
 import com.example.demo.service.QueryService;
 import com.example.demo.service.TableQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 
 @RestController
@@ -49,7 +46,7 @@ public class MainController {
 
     @GetMapping("/table/{id}")
     public ResponseEntity<?> getTable(@PathVariable Long id, Principal principal) {
-
+        return new ResponseEntity<String>("Get mappibng", HttpStatus.OK);
     }
 
 }
