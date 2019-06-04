@@ -36,7 +36,7 @@ public class CustomProperties {
     private TableQuery tableQuery;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date create_At;
+    private Date createAt;
 
     public CustomProperties() {
 
@@ -82,12 +82,12 @@ public class CustomProperties {
         this.customInsert = customInsert;
     }
 
-    public Date getCreate_At() {
-        return create_At;
+    public Date getCreateAt() {
+        return createAt;
     }
 
-    public void setCreate_At(Date create_At) {
-        this.create_At = create_At;
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     public TableQuery getTableQuery() {
@@ -97,6 +97,4 @@ public class CustomProperties {
     public void setTableQuery(TableQuery tableQuery) {
         this.tableQuery = tableQuery;
     }
-
-
 }

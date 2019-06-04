@@ -4,20 +4,27 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { processQueries } from '../actions/queryActions';
 import { getButtons } from '../actions/tableActions';
+import { getTable } from '../actions/selectActions';
 
 class Board extends React.Component {
     constructor() {
         super();
 
         this.state = {
-            query: 'Write here your SQL query...'
+            query: 'Write here your SQL query...',
+            isClickedButton: false
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmitRun = this.onSubmitRun.bind(this);
+        this.setButtonProperties = this.setButtonProperties.bind(this);
     }
 
     componentDidMount() {
         this.props.getButtons();
+    }
+
+    componentDidUpdate() {
+        this.props.getTable();
     }
 
     onChange(e) {
@@ -28,9 +35,33 @@ class Board extends React.Component {
         this.props.processQueries(this.state.query, this.props.history);
     }
 
+    setButtonProperties() {
+        this.setState({ isClickedButton: true });
+    }
+
+    createTable = (...table) => {
+        let result = [];
+        for(let i=0; i<table.length; i++) {
+            for(let j=0; j<table[i].length; j++) {
+                let children = [];
+                for(let k=0; k<table[i][j].length; k++) {
+                    children.push(<td key={table[0][j][k]}>{ table[i][j][k] }</td>);
+                }
+                result.push(<tr>{children}</tr>);
+            }  
+        }
+        return result;
+    }
+
     render() {
         const { buttons } = this.props.button;
-        console.log(buttons);
+        
+        const { table } = this.props;
+        const isClickedButton = this.state.isClickedButton;
+        console.log("Before table");
+        console.log("--------------------");
+        console.log(table);
+        console.log("isClickedButton: " + this.state.isClickedButton);
         return (
             <div className="box flex-stretch">
                 <div className="mediumClass">
@@ -50,12 +81,16 @@ class Board extends React.Component {
                 <div className="blue smallClass">
                     {
                         buttons.map(button => (
-                            <TableButton key={button.id} button={button} />
+                            <TableButton key={button.id} button={button} setButtonProperties={this.setButtonProperties} />
                         ))
                     }
                 </div>
                 <div className="red largeClass">
-                    
+                   <table>
+                        <tbody>
+                            {isClickedButton && this.createTable(table).slice()}
+                        </tbody>
+                   </table>
                 </div>
             </div>
         );
@@ -65,12 +100,14 @@ class Board extends React.Component {
 Board.propTypes = {
     query: PropTypes.string,
     button: PropTypes.object.isRequired,
-    getButtons: PropTypes.func.isRequired
+    getButtons: PropTypes.func.isRequired,
+    table: PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => ({
     query: state.query,
-    button: state.button
+    button: state.button,
+    table: state.table
 })
 
-export default connect(mapStateToProps, { processQueries, getButtons })(Board);
+export default connect(mapStateToProps, { processQueries, getButtons, getTable })(Board);

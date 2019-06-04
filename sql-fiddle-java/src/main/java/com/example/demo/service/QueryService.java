@@ -144,8 +144,17 @@ public class QueryService {
         int indexAfterValues = insertQuery.indexOf("VALUES ("); // +8
         String substr = insertQuery.substring(indexAfterValues);
         int indexAtEnd = substr.indexOf(")");
-        String subInsertQuery = insertQuery.substring(indexAfterValues + 8, indexAtEnd);
+        String subInsertQuery = substr.substring(8, indexAtEnd);
         String[] values = subInsertQuery.trim().split(",");
+
+        for(int a=0; a<values.length; a++) {
+            values[a] = values[a].replace("\'", "").replace(" ", "");
+        }
+
+        String[] splitInsertQuery = insertQuery.split(" ");
+        String buildedTableName = splitInsertQuery[2];
+
+        TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
 
         CustomInsert customInsert = new CustomInsert();
         customInsert.setInsertQuery(insertQuery);
@@ -157,13 +166,11 @@ public class QueryService {
             customProperties.setValue(values[a]);
             customProperties.setUser(userByUserName);
             customProperties.setCustomInsert(customInsert);
-            customProperties.setCreate_At(new Date());
-
+            customProperties.setCreateAt(new Date());
+            customProperties.setTableQuery(tableQuery);
 
             customPropertiesRepository.save(customProperties);
         }
-
-
         jdbcTemplate.execute(insertQuery);
     }
 
@@ -198,12 +205,20 @@ public class QueryService {
         String[] splitSubCreateQuery = subCreateQuery.split(",");
 
         List<String> result = new ArrayList<>();
+        int firstIndex =  0;
+
         for(int i=0; i<splitSubCreateQuery.length; i++) {
-            if(!isSign(splitSubCreateQuery[i])) {
+            if(isWhiteSpace(splitSubCreateQuery[i]) || splitSubCreateQuery[i].length() == 0) {
                 continue;
             }
-            int index = splitSubCreateQuery[i].indexOf(" ");
-            splitSubCreateQuery[i] = splitSubCreateQuery[i].substring(0, index);
+            if(isWhiteSpace(String.valueOf(splitSubCreateQuery[i].charAt(0)))) {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(1));
+            } else {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(0));
+            }
+            int secondIndex = splitSubCreateQuery[i].substring(firstIndex).indexOf(" ");
+            splitSubCreateQuery[i] = splitSubCreateQuery[i].substring(firstIndex, secondIndex + 1);
+
             result.add(splitSubCreateQuery[i]);
         }
 
@@ -346,8 +361,8 @@ public class QueryService {
         return firstById;
     }
 
-    private boolean isSign(String word) {
-        return word.matches("[A-Za-z0-9]+");
+    private boolean isWhiteSpace(String word) {
+        return word.matches("\\s+");
     }
 
 }

@@ -9,8 +9,6 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -39,26 +37,13 @@ public class CustomPropertiesService {
             throw new NoSuchElementException("Given table does not exists.");
         }
 
-        Iterable<CustomProperties> iterableList = customPropertiesRepository
-                .findAllByUserAndTableQueryOrderByCreate_AtAsc(userByUserName, foundedTableQuery);
-
-        List<CustomProperties> customPropertiesList = convertToList(iterableList);
+        List<CustomProperties> customPropertiesList = customPropertiesRepository
+                .findAllByUserAndTableQueryOrderByCreateAtAsc(userByUserName, foundedTableQuery);
 
         String buildedTableName = foundedTableQuery.getBuildedName();
-        int amountOfColumns = tableQueryRepository.findFirstByBuildedName(buildedTableName);
+        int amountOfColumns = tableQueryRepository.findByBuildedName(buildedTableName).getAmountColumns();
 
         return processDataToArray(customPropertiesList, amountOfColumns);
-    }
-
-    private List<CustomProperties> convertToList(Iterable<CustomProperties> iterableList) {
-        Iterator iterator = iterableList.iterator();
-        List<CustomProperties> result = new ArrayList<>();
-
-        while(iterator.hasNext()) {
-            CustomProperties customProp = (CustomProperties) iterator.next();
-            result.add(customProp);
-        }
-        return result;
     }
 
     private String[][] processDataToArray(List<CustomProperties> customPropertiesList, int amountOfColumns) {
@@ -67,14 +52,15 @@ public class CustomPropertiesService {
 
         String[][] FieldsAndValuesArray = new String[rows + 1][columns];
 
-        for(int i=0; i<customPropertiesList.size(); i++) {
+        for(int i=0; i<rows+1; i++) {
             if(i == 0) {
                 for(int j=0; j<columns; j++) {
                     FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getField();
                 }
-            }
-            for(int j=0; j<columns; j++) {
-                FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getValue();
+            } else {
+                for(int j=0; j<columns; j++) {
+                    FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getValue();
+                }
             }
         }
         return FieldsAndValuesArray;

@@ -6,12 +6,17 @@ import { getTable } from '../actions/selectActions';
 class TableButton extends React.Component {
     constructor() {
         super();
-
+        
+        this.state = {
+            isClickedButton: false
+        }
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     onSubmit(e) {
+        e.preventDefault();
         const id = this.props.button.id;
+        this.props.setButtonProperties();
         this.props.getTable(id, this.props.history);
     }
 
@@ -26,7 +31,7 @@ class TableButton extends React.Component {
 }
 
 TableButton.propTypes = {
-    table: PropTypes.object.isRequired
+    table: PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => ({
