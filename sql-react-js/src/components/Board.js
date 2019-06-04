@@ -44,6 +44,7 @@ class Board extends React.Component {
         for(let i=0; i<table.length; i++) {
             for(let j=0; j<table[i].length; j++) {
                 let children = [];
+
                 for(let k=0; k<table[i][j].length; k++) {
                     children.push(<td key={table[0][j][k]}>{ table[i][j][k] }</td>);
                 }
@@ -86,11 +87,13 @@ class Board extends React.Component {
                     }
                 </div>
                 <div className="red largeClass">
-                   <table>
-                        <tbody>
-                            {isClickedButton && this.createTable(table).slice()}
-                        </tbody>
-                   </table>
+                    <div className="table-responsive-sm">
+                        <table className="table table-striped table-dark">
+                            <tbody>
+                                {isClickedButton && this.createTable(table).slice()}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         );
