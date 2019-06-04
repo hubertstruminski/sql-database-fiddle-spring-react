@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.CustomInsert;
+import com.example.demo.entity.CustomProperties;
 import com.example.demo.entity.TableQuery;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.TableAlreadyExistsException;
+import com.example.demo.repository.CustomPropertiesRepository;
 import com.example.demo.repository.TableQueryRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+
+import java.util.Date;
 
 @Service
 public class QueryService {
@@ -21,6 +28,9 @@ public class QueryService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomPropertiesRepository customPropertiesRepository;
 
     public String[] decodeAndSplitUrl(String query) throws UnsupportedEncodingException {
         String decoded = URLDecoder.decode(query, "UTF-8");
@@ -96,7 +106,7 @@ public class QueryService {
             String dropTableQUery = "DROP TABLE " + "public." + buildedTableName;
             jdbcTemplate.execute(dropTableQUery);
         } else {
-            saveTable(buildedTableName, userName, tableNameBeforeBuild);
+            saveTable(buildedTableName, userName, tableNameBeforeBuild, createTableQuery);
         }
         try {
             jdbcTemplate.execute(createTableQuery);
@@ -122,8 +132,46 @@ public class QueryService {
     }
 
     public void runQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
-        String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
-        jdbcTemplate.execute(query);
+        String insertQuery = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
+
+        User userByUserName = userRepository.findByUserName(userName);
+
+        int indexParenthesis = insertQuery.indexOf("(");
+        int indexSecondParenthesis = insertQuery.indexOf(")");
+        String subCreateQuery = insertQuery.substring(indexParenthesis + 1, indexSecondParenthesis);
+        String[] fields = subCreateQuery.trim().split(",");
+
+        int indexAfterValues = insertQuery.indexOf("VALUES ("); // +8
+        String substr = insertQuery.substring(indexAfterValues);
+        int indexAtEnd = substr.indexOf(")");
+        String subInsertQuery = substr.substring(8, indexAtEnd);
+        String[] values = subInsertQuery.trim().split(",");
+
+        for(int a=0; a<values.length; a++) {
+            values[a] = values[a].replace("\'", "").replace(" ", "");
+        }
+
+        String[] splitInsertQuery = insertQuery.split(" ");
+        String buildedTableName = splitInsertQuery[2];
+
+        TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
+
+        CustomInsert customInsert = new CustomInsert();
+        customInsert.setInsertQuery(insertQuery);
+
+        for(int a=0; a<fields.length; a++) {
+            CustomProperties customProperties = new CustomProperties();
+
+            customProperties.setField(fields[a]);
+            customProperties.setValue(values[a]);
+            customProperties.setUser(userByUserName);
+            customProperties.setCustomInsert(customInsert);
+            customProperties.setCreateAt(new Date());
+            customProperties.setTableQuery(tableQuery);
+
+            customPropertiesRepository.save(customProperties);
+        }
+        jdbcTemplate.execute(insertQuery);
     }
 
     public void runUpdateQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
@@ -138,7 +186,7 @@ public class QueryService {
     }
 
 
-    public void saveTable(String tableName, String userName, String tableNameBefore) {
+    public void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
         TableQuery tableQueryByName = tableQueryRepository.findByBuildedName(tableName);
 
         if(tableQueryByName != null) {
@@ -151,14 +199,44 @@ public class QueryService {
             throw new NoSuchElementException("Given user does not exists");
         }
 
+        int indexParenthesis = createTableQuery.indexOf("(");
+        int indexPrimary = createTableQuery.indexOf("PRIMARY");
+        String subCreateQuery = createTableQuery.substring(indexParenthesis + 1, indexPrimary);
+        String[] splitSubCreateQuery = subCreateQuery.split(",");
+
+        List<String> result = new ArrayList<>();
+        int firstIndex =  0;
+
+        for(int i=0; i<splitSubCreateQuery.length; i++) {
+            if(isWhiteSpace(splitSubCreateQuery[i]) || splitSubCreateQuery[i].length() == 0) {
+                continue;
+            }
+            if(isWhiteSpace(String.valueOf(splitSubCreateQuery[i].charAt(0)))) {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(1));
+            } else {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(0));
+            }
+            int secondIndex = splitSubCreateQuery[i].substring(firstIndex).indexOf(" ");
+            splitSubCreateQuery[i] = splitSubCreateQuery[i].substring(firstIndex, secondIndex + 1);
+
+            result.add(splitSubCreateQuery[i]);
+        }
+
+
+
+
         TableQuery tableQuery = new TableQuery();
 
         tableQuery.setBuildedName(tableName);
         tableQuery.setUser(user);
         tableQuery.setTableNameBefore(tableNameBefore);
+        tableQuery.setCreateQuery(createTableQuery);
 
         String selectQuery = "SELECT * FROM " + tableName;
         tableQuery.setSelectQuery(selectQuery);
+
+        // amount of columns
+        tableQuery.setAmountColumns(result.size());
 
         tableQueryRepository.save(tableQuery);
     }
@@ -269,6 +347,22 @@ public class QueryService {
             }
         }
         return concatenateQuery(splitUpdateQuery, splitUpdateQuery[1], 1);
+    }
+
+    public TableQuery findById(Long id, JdbcTemplate jdbcTemplate, String insertQuery, String userName) {
+        TableQuery firstById = tableQueryRepository.findFirstById(id);
+
+        if(firstById == null) {
+            throw new NoSuchElementException("Given table does not exists.");
+        }
+
+
+
+        return firstById;
+    }
+
+    private boolean isWhiteSpace(String word) {
+        return word.matches("\\s+");
     }
 
 }
