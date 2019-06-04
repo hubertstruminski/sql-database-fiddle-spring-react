@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class TableQuery {
@@ -17,13 +18,23 @@ public class TableQuery {
     @Column(name = "select_query")
     private String selectQuery;
 
+    @Column(name = "create_query")
+    private String createQuery;
+
     @Column(name = "table_name_before")
     private String tableNameBefore;
+
+    @Column(name = "amount_columns")
+    private int amountColumns;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tableQuery")
+    @Transient
+    private List<CustomProperties> customProperties;
 
     public TableQuery() {
 
@@ -67,5 +78,21 @@ public class TableQuery {
 
     public void setTableNameBefore(String tableNameBefore) {
         this.tableNameBefore = tableNameBefore;
+    }
+
+    public String getCreateQuery() {
+        return createQuery;
+    }
+
+    public void setCreateQuery(String createQuery) {
+        this.createQuery = createQuery;
+    }
+
+    public int getAmountColumns() {
+        return amountColumns;
+    }
+
+    public void setAmountColumns(int amountColumns) {
+        this.amountColumns = amountColumns;
     }
 }

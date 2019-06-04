@@ -36,15 +36,4 @@ public class TableQueryService {
         }
         return tableQueryRepository.findByIdAndUser(id, foundUser);
     }
-
-    public TableQuery findById(Long id, JdbcTemplate jdbcTemplate) {
-        TableQuery firstById = tableQueryRepository.findFirstById(id);
-
-        if(firstById == null) {
-            throw new NoSuchElementException("Given table does not exists.");
-        }
-
-        String selectQuery = firstById.getSelectQuery();
-        return firstById;
-    }
 }

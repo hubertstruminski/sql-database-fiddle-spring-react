@@ -55,6 +55,9 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     List<TableQuery> tables;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    List<CustomProperties> properties;
+
     public User() {
 
     }
