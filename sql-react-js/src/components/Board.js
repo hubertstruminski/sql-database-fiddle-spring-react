@@ -44,7 +44,6 @@ class Board extends React.Component {
         for(let i=0; i<table.length; i++) {
             for(let j=0; j<table[i].length; j++) {
                 let children = [];
-
                 for(let k=0; k<table[i][j].length; k++) {
                     children.push(<td key={table[0][j][k]}>{ table[i][j][k] }</td>);
                 }
