@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNewUser, passWelcomeMessage } from '../../actions/securityActions';
+import { createNewUser } from '../../actions/securityActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -15,8 +15,7 @@ class Register extends React.Component {
             firstName: '',
             lastName: '',
             email: '',
-            errors: {},
-            successfulWelcomeMessage: false
+            errors: {}
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -43,13 +42,12 @@ class Register extends React.Component {
             lastName: this.state.lastName,
             email: this.state.email            
         }
-        this.setState({ successfulWelcomeMessage: true });
         this.props.createNewUser(userRegisterValidator, this.props.history);
-        this.props.passWelcomeMessage(this.props.history);
     }
 
     render() {
         const { errors } = this.state
+
         return (
             <div className="container">
                 <div className="row">
@@ -57,8 +55,7 @@ class Register extends React.Component {
                         <div className="card card-signin my-5">
                             <div className="card-body">
                                 <h5 className="card-title text-center">Sign Up</h5>
-                                <hr className="my-4" />
-
+                                <hr className="my-4" />    
                                 <form onSubmit={this.onSubmit} className="form-signin">
                                     <div className="form-label-group">
                                         <input 
@@ -180,9 +177,13 @@ class Register extends React.Component {
                                         }
                                         <label htmlFor="email">Email</label>
                                     </div>
-
                                     <hr className="my-4" />
-                                    <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign up</button>
+                                    <button 
+                                        className="btn btn-lg btn-primary btn-block text-uppercase" 
+                                        type="submit"
+                                    >
+                                        Sign up
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -196,14 +197,12 @@ class Register extends React.Component {
 Register.propTypes = {
     createNewUser: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
-    security: PropTypes.object.isRequired,
-    welcomeMessage: PropTypes.bool.isRequired
+    security: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
     errors: state.errors,
-    security: state.security,
-    welcomeMessage: state.welcomeMessage
+    security: state.security
 });
 
-export default connect(mapStateToProps, { createNewUser, passWelcomeMessage })(Register);
+export default connect(mapStateToProps, { createNewUser })(Register);

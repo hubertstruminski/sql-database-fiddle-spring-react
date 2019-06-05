@@ -16,6 +16,7 @@ import { SET_CURRENT_USER } from './actions/types';
 import { logout } from './actions/securityActions';
 import SecuredRoute from '../src/securityUtils/SecureRoute';
 import Board from './components/Board';
+import MessageSuccess from './components/Layout/MessageSuccess';
 
 const jwtToken = localStorage.jwtToken;
 
@@ -46,6 +47,8 @@ function App() {
           <Route exact path="/login" component={Login} />
 `         <Route exact path="/registration" component={Register} />
 
+          <Route exact path="/success" component={MessageSuccess} />
+          
           <SecuredRoute exact path="/fiddle" component={Board} />
  
         </div>

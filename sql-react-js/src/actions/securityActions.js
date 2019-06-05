@@ -6,6 +6,8 @@ import jwt_decode from 'jwt-decode';
 export const createNewUser = (userRegisterValidator, history) => async dispatch => {
     try {
         const res = await axios.post("/register", userRegisterValidator);
+        history.push("/success");
+        
         dispatch({
             type: GET_ERRORS,
             payload: {}
@@ -48,12 +50,3 @@ export const logout = () => dispatch => {
         payload: {}
     });
 };
-
-export const passWelcomeMessage = (history) => async dispatch => {
-    const res = await axios.get("/message");
-    history.push("/login");
-    dispatch({
-        type: GET_WELCOME_MESSAGE,
-        payload: res.data
-    });
-}
