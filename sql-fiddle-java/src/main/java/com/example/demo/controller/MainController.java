@@ -53,5 +53,4 @@ public class MainController {
         String[][] table = customPropertiesService.getTable(id, principal.getName());
         return new ResponseEntity<String[][]>(table, HttpStatus.OK);
     }
-
 }

@@ -1,12 +1,11 @@
 import axios from 'axios';
-import { GET_ERRORS, SET_CURRENT_USER } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, GET_WELCOME_MESSAGE } from './types';
 import setJWTToken from '../securityUtils/setJWTToken';
 import jwt_decode from 'jwt-decode';
 
 export const createNewUser = (userRegisterValidator, history) => async dispatch => {
     try {
         const res = await axios.post("/register", userRegisterValidator);
-        // history.push("/login");
         dispatch({
             type: GET_ERRORS,
             payload: {}
@@ -34,7 +33,10 @@ export const login = invalidLoginResponse => async dispatch => {
             payload: decoded
         });
     } catch(error) {
-        console.log(error);
+        dispatch({
+            type: GET_ERRORS,
+            payload: error.response.data
+        });
     }
 };
 
@@ -46,3 +48,12 @@ export const logout = () => dispatch => {
         payload: {}
     });
 };
+
+export const passWelcomeMessage = (history) => async dispatch => {
+    const res = await axios.get("/message");
+    history.push("/login");
+    dispatch({
+        type: GET_WELCOME_MESSAGE,
+        payload: res.data
+    });
+}

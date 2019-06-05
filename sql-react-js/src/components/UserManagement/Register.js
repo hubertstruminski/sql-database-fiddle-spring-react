@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNewUser } from '../../actions/securityActions';
+import { createNewUser, passWelcomeMessage } from '../../actions/securityActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -45,6 +45,7 @@ class Register extends React.Component {
         }
         this.setState({ successfulWelcomeMessage: true });
         this.props.createNewUser(userRegisterValidator, this.props.history);
+        this.props.passWelcomeMessage(this.props.history);
     }
 
     render() {
@@ -58,8 +59,6 @@ class Register extends React.Component {
                                 <h5 className="card-title text-center">Sign Up</h5>
                                 <hr className="my-4" />
 
-                                <ShowSuccessfulRegistrationMessage successfulWelcomeMessage={this.state.successfulWelcomeMessage} />
-                                
                                 <form onSubmit={this.onSubmit} className="form-signin">
                                     <div className="form-label-group">
                                         <input 
@@ -194,22 +193,17 @@ class Register extends React.Component {
     }
 }
 
-function ShowSuccessfulRegistrationMessage(props) {
-    if(props.successfulWelcomeMessage) {
-        return <div className="alert alert-success">User has been registered successfully</div>;
-    }
-    return null;
-}
-
 Register.propTypes = {
     createNewUser: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
-    security: PropTypes.object.isRequired
+    security: PropTypes.object.isRequired,
+    welcomeMessage: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = state => ({
     errors: state.errors,
-    security: state.security
+    security: state.security,
+    welcomeMessage: state.welcomeMessage
 });
 
-export default connect(mapStateToProps, { createNewUser })(Register);
+export default connect(mapStateToProps, { createNewUser, passWelcomeMessage })(Register);

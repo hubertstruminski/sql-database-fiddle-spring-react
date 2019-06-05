@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { login } from '../../actions/securityActions';
+import { login, passWelcomeMessage } from '../../actions/securityActions';
+
 
 class Login extends React.Component {
     constructor() {
@@ -11,6 +12,7 @@ class Login extends React.Component {
         this.state = {
             userName: '',
             password: '',
+            isRegistrationMessage: false,
             errors: {}
         }
         this.onChange = this.onChange.bind(this);
@@ -37,6 +39,10 @@ class Login extends React.Component {
         }
     }
 
+    setRegistrationMessage() {
+        this.setState({ isRegistrationMessage: true });
+    }
+
     onSubmit(e) {
         e.preventDefault();
 
@@ -49,6 +55,11 @@ class Login extends React.Component {
 
     render() {
         const { errors } = this.state;
+
+        const { welcomeMessage } = this.props;
+        let isRegistrationMessage = this.state.isRegistrationMessage;
+        isRegistrationMessage = welcomeMessage["welcomeMessage"];
+        console.log(welcomeMessage);
         return (
             <div className="box">
                 <div className="container">
@@ -58,6 +69,11 @@ class Login extends React.Component {
                                 <div className="card-body">
                                     <h5 className="card-title text-center">Sign In</h5>
                                     <hr className="my-4" />
+
+                                    {
+                                        isRegistrationMessage && <ShowSuccessfulRegistrationMessage message={welcomeMessage} />
+                                    }
+
                                     <form onSubmit={this.onSubmit} className="form-signin">
                                         <div className="form-label-group">
                                             <input 
@@ -113,15 +129,24 @@ class Login extends React.Component {
     }
 }
 
+function ShowSuccessfulRegistrationMessage(message) {
+    if(message) {
+        return <div className="alert alert-success">User has been registered successfully</div>;
+    }
+    return null;
+}
+
 Login.propTypes = {
     login: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
-    security: PropTypes.object.isRequired
+    security: PropTypes.object.isRequired,
+    welcomeMessage: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = state => ({
     security: state.security,
-    errors: state.errors
+    errors: state.errors,
+    welcomeMessage: state.welcomeMessage
 })
 
-export default connect(mapStateToProps, {login})(Login);
+export default connect(mapStateToProps, {login, passWelcomeMessage})(Login);

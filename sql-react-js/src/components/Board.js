@@ -87,7 +87,7 @@ class Board extends React.Component {
                 </div>
                 <div className="red largeClass">
                     <div className="table-responsive-sm">
-                        <table className="table table-striped table-dark">
+                        <table className="table table-striped table-dark table-radius table-hover">
                             <tbody>
                                 {isClickedButton && this.createTable(table).slice()}
                             </tbody>

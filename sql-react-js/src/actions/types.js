@@ -8,3 +8,5 @@ export const DISPLAY_BUTTONS = "DISPLAY_BUTTONS";
 export const DISPLAY_BUTTON = "DISPLAY_BUTTON";
 
 export const GET_TABLE = "GET_TABLE";
+
+export const GET_WELCOME_MESSAGE = "GET_WELCOME_MESSAGE";
