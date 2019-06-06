@@ -5,6 +5,7 @@ import com.example.demo.entity.CustomProperties;
 import com.example.demo.entity.TableQuery;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.TableAlreadyExistsException;
+import com.example.demo.repository.CustomInsertRepository;
 import com.example.demo.repository.CustomPropertiesRepository;
 import com.example.demo.repository.TableQueryRepository;
 import com.example.demo.repository.UserRepository;
@@ -31,6 +32,9 @@ public class QueryService {
 
     @Autowired
     private CustomPropertiesRepository customPropertiesRepository;
+
+    @Autowired
+    private CustomInsertRepository customInsertRepository;
 
     public String[] decodeAndSplitUrl(String query) throws UnsupportedEncodingException {
         String decoded = URLDecoder.decode(query, "UTF-8");
@@ -80,7 +84,7 @@ public class QueryService {
                 String[] splittedDeleteQueries = decodeAndSplitUrlForUpdateQuery(query);
                 for(int j=0; j<splittedDeleteQueries.length; j++) {
                     if(splittedDeleteQueries[j].contains("DELETE")) {
-                        updateQuery(splittedDeleteQueries, j, jdbcTemplate, userName, "DELETE", 2);
+                        deleteQuery(splittedDeleteQueries, j, jdbcTemplate, userName, "DELETE", 2);
                     }
                 }
             }
@@ -112,7 +116,7 @@ public class QueryService {
         }
     }
 
-    public String processQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
+    private String processQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
         int startIndex = splittedQueries[i].indexOf(queryType);
         splittedQueries[i] = splittedQueries[i].substring(startIndex);
         String[] splittedInsertQuery = splittedQueries[i].split(" ");
@@ -164,13 +168,28 @@ public class QueryService {
 
         Object[] array = algorithmForUpdateQuery(query);
         parseNumbers(array);
-        String updateQueryResult = changeValuesOnQuestionMark(query);
+        String[] splitUpdateQuery = changeValuesOnQuestionMark(query);
+        String updateQueryResult = concatenateQuery(splitUpdateQuery, splitUpdateQuery[1], 1);
 
         jdbcTemplate.update(updateQueryResult, array);
     }
 
+    private void deleteQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
+        String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
 
-    public void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
+        String id = getWhereClauseId(query);
+        Long deleteId = Long.parseLong(id);
+
+        deleteEntities(id);
+
+        String[] splitDeleteQuery = changeValuesOnQuestionMark(query);
+        String deleteQuery = concatenateQuery(splitDeleteQuery, splitDeleteQuery[2], 2);
+
+        Object[] params = new Object[] { deleteId };
+        jdbcTemplate.update(deleteQuery, params);
+    }
+
+    private void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
         TableQuery tableQueryByName = tableQueryRepository.findByBuildedName(tableName);
 
         if(tableQueryByName != null) {
@@ -189,7 +208,7 @@ public class QueryService {
         tableQueryRepository.save(tableQuery);
     }
 
-    public String buildTableName(String[] splittedCreateTableQuery, String userName, int index) {
+    private String buildTableName(String[] splittedCreateTableQuery, String userName, int index) {
         String tableName = splittedCreateTableQuery[index];
 
         StringBuilder builder = new StringBuilder();
@@ -197,7 +216,7 @@ public class QueryService {
         return builder.toString();
     }
 
-    public String concatenateQuery(String[] splittedCreateTableQuery, String buildedTableName, int index) {
+    private String concatenateQuery(String[] splittedCreateTableQuery, String buildedTableName, int index) {
         StringBuilder builder = new StringBuilder();
         for(int i=0; i<splittedCreateTableQuery.length; i++) {
             if(i == index) {
@@ -209,11 +228,11 @@ public class QueryService {
         return builder.toString();
     }
 
-    public boolean isNumeric(String potentialNumber) {
+    private boolean isNumeric(String potentialNumber) {
         return potentialNumber.matches("-?\\d+(\\.\\d)?");
     }
 
-    public Object[] computeVariables(String query) {
+    private Object[] computeVariables(String query) {
         int counter = 0;
         for(int i=0; i<query.length(); i++) {
             if(query.charAt(i) == '=') {
@@ -223,7 +242,7 @@ public class QueryService {
         return new Object[counter];
     }
 
-    public Object[] algorithmForUpdateQuery(String query) {
+    private Object[] algorithmForUpdateQuery(String query) {
         Object[] array = computeVariables(query);
 
         boolean isNumberValue = false;
@@ -274,7 +293,7 @@ public class QueryService {
         return array;
     }
 
-    public void parseNumbers(Object[] array) {
+    private void parseNumbers(Object[] array) {
         for(int a=0; a<array.length; a++) {
             if(isNumeric(String.valueOf(array[a]))) {
                 if(String.valueOf(array[a]).contains(".")) {
@@ -286,7 +305,7 @@ public class QueryService {
         }
     }
 
-    public String changeValuesOnQuestionMark(String query) {
+    private String[] changeValuesOnQuestionMark(String query) {
         String[] splitUpdateQuery = query.split(" ");
 
         for(int m=0; m<splitUpdateQuery.length; m++) {
@@ -294,19 +313,7 @@ public class QueryService {
                 splitUpdateQuery[m + 1] = "?";
             }
         }
-        return concatenateQuery(splitUpdateQuery, splitUpdateQuery[1], 1);
-    }
-
-    public TableQuery findById(Long id, JdbcTemplate jdbcTemplate, String insertQuery, String userName) {
-        TableQuery firstById = tableQueryRepository.findFirstById(id);
-
-        if(firstById == null) {
-            throw new NoSuchElementException("Given table does not exists.");
-        }
-
-
-
-        return firstById;
+        return splitUpdateQuery;
     }
 
     private boolean isWhiteSpace(String word) {
@@ -410,9 +417,7 @@ public class QueryService {
     }
 
     private void updateCustomProperties(String query, List<String> fields, List<String> values) {
-        int startIndex = query.trim().indexOf("id = ");
-        String id = query.substring(startIndex + 5);
-        id = id.trim();
+        String id = getWhereClauseId(query);
 
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
         CustomInsert customInsert = customProperties.getCustomInsert();
@@ -427,5 +432,22 @@ public class QueryService {
                 }
             }
         }
+    }
+
+    private String getWhereClauseId(String query) {
+        int startIndex = query.trim().indexOf("id = ");
+        String id = query.substring(startIndex + 5);
+        return id.trim();
+    }
+
+    private void deleteEntities(String id) {
+        CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
+        CustomInsert customInsert = customProperties.getCustomInsert();
+        List<CustomProperties> customPropertiesList = customPropertiesRepository.findAllByCustomInsert(customInsert);
+
+        for(int j=0; j<customPropertiesList.size(); j++) {
+            customPropertiesRepository.delete(customPropertiesList.get(j));
+        }
+        customInsertRepository.delete(customInsert);
     }
 }
