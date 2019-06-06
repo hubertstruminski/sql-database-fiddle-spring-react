@@ -17,6 +17,7 @@ class Board extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.onSubmitRun = this.onSubmitRun.bind(this);
         this.setButtonProperties = this.setButtonProperties.bind(this);
+        this.onSubmitClear = this.onSubmitClear.bind(this);
     }
 
     componentDidMount() {
@@ -53,15 +54,16 @@ class Board extends React.Component {
         return result;
     }
 
+    onSubmitClear(e) {
+        this.tbody.innerHTML = "";
+    }
+
     render() {
         const { buttons } = this.props.button;
         
         const { table } = this.props;
         const isClickedButton = this.state.isClickedButton;
-        console.log("Before table");
-        console.log("--------------------");
-        console.log(table);
-        console.log("isClickedButton: " + this.state.isClickedButton);
+
         return (
             <div className="box flex-stretch">
                 <div className="mediumClass">
@@ -79,16 +81,22 @@ class Board extends React.Component {
                     </form>
                 </div>
                 <div className="blue smallClass">
+                    <h3>Your tables:</h3>
+                    <br />
                     {
                         buttons.map(button => (
-                            <TableButton key={button.id} button={button} setButtonProperties={this.setButtonProperties} />
+                            <TableButton key={button.id} button={button} setButtonProperties={this.setButtonProperties} onSubmitClear={this.onSubmitClear}/>
                         ))
                     }
+                    <hr className="my-4" /> 
+                    <form onSubmit={this.onSubmitClear}>
+                        <input type="submit" value="Clear" className="clearButton" />
+                    </form>
                 </div>
                 <div className="red largeClass">
                     <div className="table-responsive-sm">
-                        <table className="table table-striped table-dark table-radius table-hover">
-                            <tbody>
+                        <table className="table table-striped table-dark table-radius table-hover table-margin">
+                            <tbody ref={(el) => this.tbody = el}>
                                 {isClickedButton && this.createTable(table).slice()}
                             </tbody>
                         </table>
