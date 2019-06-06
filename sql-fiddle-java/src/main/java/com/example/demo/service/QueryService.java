@@ -136,41 +136,11 @@ public class QueryService {
 
         User userByUserName = userRepository.findByUserName(userName);
 
-        int indexParenthesis = insertQuery.indexOf("(");
-        int indexSecondParenthesis = insertQuery.indexOf(")");
-        String subCreateQuery = insertQuery.substring(indexParenthesis + 1, indexSecondParenthesis);
-        String[] fields = subCreateQuery.trim().split(",");
+        String[] fields = getFieldsFromInsertQuery(insertQuery);
+        String[] values = getValuesFromInsertQuery(insertQuery);
+        String buildedTableName = getBuildedTableName(insertQuery);
 
-        int indexAfterValues = insertQuery.indexOf("VALUES ("); // +8
-        String substr = insertQuery.substring(indexAfterValues);
-        int indexAtEnd = substr.indexOf(")");
-        String subInsertQuery = substr.substring(8, indexAtEnd);
-        String[] values = subInsertQuery.trim().split(",");
-
-        for(int a=0; a<values.length; a++) {
-            values[a] = values[a].replace("\'", "").replace(" ", "");
-        }
-
-        String[] splitInsertQuery = insertQuery.split(" ");
-        String buildedTableName = splitInsertQuery[2];
-
-        TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
-
-        CustomInsert customInsert = new CustomInsert();
-        customInsert.setInsertQuery(insertQuery);
-
-        for(int a=0; a<fields.length; a++) {
-            CustomProperties customProperties = new CustomProperties();
-
-            customProperties.setField(fields[a]);
-            customProperties.setValue(values[a]);
-            customProperties.setUser(userByUserName);
-            customProperties.setCustomInsert(customInsert);
-            customProperties.setCreateAt(new Date());
-            customProperties.setTableQuery(tableQuery);
-
-            customPropertiesRepository.save(customProperties);
-        }
+        saveCustomProperties(buildedTableName, insertQuery, fields, values, userByUserName);
         jdbcTemplate.execute(insertQuery);
     }
 
@@ -365,4 +335,49 @@ public class QueryService {
         return word.matches("\\s+");
     }
 
+    private String[] getFieldsFromInsertQuery(String insertQuery) {
+        int indexParenthesis = insertQuery.indexOf("(");
+        int indexSecondParenthesis = insertQuery.indexOf(")");
+        String subCreateQuery = insertQuery.substring(indexParenthesis + 1, indexSecondParenthesis);
+        return subCreateQuery.trim().split(",");
+    }
+
+    private String[] getValuesFromInsertQuery(String insertQuery) {
+        int indexAfterValues = insertQuery.indexOf("VALUES ("); // +8
+        String substr = insertQuery.substring(indexAfterValues);
+        int indexAtEnd = substr.indexOf(")");
+        String subInsertQuery = substr.substring(8, indexAtEnd);
+        String[] values = subInsertQuery.trim().split(",");
+
+        for(int a=0; a<values.length; a++) {
+            values[a] = values[a].replace("\'", "").replace(" ", "");
+        }
+        return values;
+    }
+
+    private String getBuildedTableName(String insertQuery) {
+        String[] splitInsertQuery = insertQuery.split(" ");
+        return splitInsertQuery[2];
+    }
+
+    private void saveCustomProperties(String buildedTableName, String insertQuery, String[] fields, String[] values,
+                                      User userByUserName) {
+        TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
+
+        CustomInsert customInsert = new CustomInsert();
+        customInsert.setInsertQuery(insertQuery);
+
+        for(int a=0; a<fields.length; a++) {
+            CustomProperties customProperties = new CustomProperties();
+
+            customProperties.setField(fields[a]);
+            customProperties.setValue(values[a]);
+            customProperties.setUser(userByUserName);
+            customProperties.setCustomInsert(customInsert);
+            customProperties.setCreateAt(new Date());
+            customProperties.setTableQuery(tableQuery);
+
+            customPropertiesRepository.save(customProperties);
+        }
+    }
 }
