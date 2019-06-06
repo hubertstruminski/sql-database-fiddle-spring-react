@@ -8,6 +8,7 @@ import com.example.demo.repository.TableQueryRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -67,6 +68,7 @@ public class CustomPropertiesService {
         return FieldsAndValuesArray;
     }
 
+    @Transactional
     public void update(String id) {
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
         customPropertiesRepository.save(customProperties);

@@ -21,7 +21,10 @@ import java.util.NoSuchElementException;
 
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class QueryService {
 
     @Autowired
@@ -58,7 +61,6 @@ public class QueryService {
                 break;
             }
         }
-
         return splittedDecodedQueries;
     }
 
@@ -189,7 +191,7 @@ public class QueryService {
         jdbcTemplate.update(deleteQuery, params);
     }
 
-    private void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
+    public void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
         TableQuery tableQueryByName = tableQueryRepository.findByBuildedName(tableName);
 
         if(tableQueryByName != null) {
@@ -345,7 +347,7 @@ public class QueryService {
         return splitInsertQuery[2];
     }
 
-    private void saveCustomProperties(String buildedTableName, String insertQuery, String[] fields, String[] values,
+    public void saveCustomProperties(String buildedTableName, String insertQuery, String[] fields, String[] values,
                                       User userByUserName) {
         TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
 
@@ -416,7 +418,7 @@ public class QueryService {
         return tableQuery;
     }
 
-    private void updateCustomProperties(String query, List<String> fields, List<String> values) {
+    public void updateCustomProperties(String query, List<String> fields, List<String> values) {
         String id = getWhereClauseId(query);
 
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
@@ -440,14 +442,14 @@ public class QueryService {
         return id.trim();
     }
 
-    private void deleteEntities(String id) {
+    public void deleteEntities(String id) {
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
         CustomInsert customInsert = customProperties.getCustomInsert();
-        List<CustomProperties> customPropertiesList = customPropertiesRepository.findAllByCustomInsert(customInsert);
 
-        for(int j=0; j<customPropertiesList.size(); j++) {
-            customPropertiesRepository.delete(customPropertiesList.get(j));
-        }
-        customInsertRepository.delete(customInsert);
+//        List<CustomProperties> customPropertiesList = customPropertiesRepository.findAllByCustomInsert(customInsert);
+//        for(int i=0; i<customPropertiesList.size(); i++) {
+//            customPropertiesRepository.deleteByCustomInsert(cu);
+//        }
+        customPropertiesRepository.deleteByCustomInsert(customInsert);
     }
 }

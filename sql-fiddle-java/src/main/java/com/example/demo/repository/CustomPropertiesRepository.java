@@ -18,5 +18,5 @@ public interface CustomPropertiesRepository extends CrudRepository<CustomPropert
 
     List<CustomProperties> findAllByCustomInsert(CustomInsert customInsert);
 
-
+    void deleteByCustomInsert(CustomInsert customInsert);
 }
