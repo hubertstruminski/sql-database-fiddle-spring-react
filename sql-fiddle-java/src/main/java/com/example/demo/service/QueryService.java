@@ -169,45 +169,9 @@ public class QueryService {
             throw new NoSuchElementException("Given user does not exists");
         }
 
-        int indexParenthesis = createTableQuery.indexOf("(");
-        int indexPrimary = createTableQuery.indexOf("PRIMARY");
-        String subCreateQuery = createTableQuery.substring(indexParenthesis + 1, indexPrimary);
-        String[] splitSubCreateQuery = subCreateQuery.split(",");
-
-        List<String> result = new ArrayList<>();
-        int firstIndex =  0;
-
-        for(int i=0; i<splitSubCreateQuery.length; i++) {
-            if(isWhiteSpace(splitSubCreateQuery[i]) || splitSubCreateQuery[i].length() == 0) {
-                continue;
-            }
-            if(isWhiteSpace(String.valueOf(splitSubCreateQuery[i].charAt(0)))) {
-                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(1));
-            } else {
-                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(0));
-            }
-            int secondIndex = splitSubCreateQuery[i].substring(firstIndex).indexOf(" ");
-            splitSubCreateQuery[i] = splitSubCreateQuery[i].substring(firstIndex, secondIndex + 1);
-
-            result.add(splitSubCreateQuery[i]);
-        }
-
-
-
-
-        TableQuery tableQuery = new TableQuery();
-
-        tableQuery.setBuildedName(tableName);
-        tableQuery.setUser(user);
-        tableQuery.setTableNameBefore(tableNameBefore);
-        tableQuery.setCreateQuery(createTableQuery);
-
-        String selectQuery = "SELECT * FROM " + tableName;
-        tableQuery.setSelectQuery(selectQuery);
-
-        // amount of columns
-        tableQuery.setAmountColumns(result.size());
-
+        List<String> result = processColumnsFromCreateQuery(createTableQuery);
+        
+        TableQuery tableQuery = saveTableQuery(tableName, user, tableNameBefore, createTableQuery, result);
         tableQueryRepository.save(tableQuery);
     }
 
@@ -379,5 +343,53 @@ public class QueryService {
 
             customPropertiesRepository.save(customProperties);
         }
+    }
+
+    private List<String> processColumnsFromCreateQuery(String createTableQuery) {
+        String[] splitSubCreateQuery = splitCreateQueryToColumns(createTableQuery);
+
+        List<String> result = new ArrayList<>();
+        int firstIndex =  0;
+
+        for(int i=0; i<splitSubCreateQuery.length; i++) {
+            if(isWhiteSpace(splitSubCreateQuery[i]) || splitSubCreateQuery[i].length() == 0) {
+                continue;
+            }
+            if(isWhiteSpace(String.valueOf(splitSubCreateQuery[i].charAt(0)))) {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(1));
+            } else {
+                firstIndex = splitSubCreateQuery[i].indexOf(splitSubCreateQuery[i].charAt(0));
+            }
+            int secondIndex = splitSubCreateQuery[i].substring(firstIndex).indexOf(" ");
+            splitSubCreateQuery[i] = splitSubCreateQuery[i].substring(firstIndex, secondIndex + 1);
+
+            result.add(splitSubCreateQuery[i]);
+        }
+        return result;
+    }
+
+    private String[] splitCreateQueryToColumns(String createTableQuery) {
+        int indexParenthesis = createTableQuery.indexOf("(");
+        int indexPrimary = createTableQuery.indexOf("PRIMARY");
+        String subCreateQuery = createTableQuery.substring(indexParenthesis + 1, indexPrimary);
+        return subCreateQuery.split(",");
+    }
+
+    private TableQuery saveTableQuery(String tableName, User user, String tableNameBefore, String createTableQuery,
+                                List<String> result) {
+        TableQuery tableQuery = new TableQuery();
+
+        tableQuery.setBuildedName(tableName);
+        tableQuery.setUser(user);
+        tableQuery.setTableNameBefore(tableNameBefore);
+        tableQuery.setCreateQuery(createTableQuery);
+
+        String selectQuery = "SELECT * FROM " + tableName;
+        tableQuery.setSelectQuery(selectQuery);
+
+        // amount of columns
+        tableQuery.setAmountColumns(result.size());
+
+        return tableQuery;
     }
 }
