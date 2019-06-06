@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.CustomInsert;
 import com.example.demo.entity.CustomProperties;
 import com.example.demo.entity.TableQuery;
 import com.example.demo.entity.User;
@@ -12,4 +13,10 @@ import java.util.List;
 public interface CustomPropertiesRepository extends CrudRepository<CustomProperties, Long> {
 
     List<CustomProperties> findAllByUserAndTableQueryOrderByCreateAtAsc(User user, TableQuery tableQuery);
+
+    CustomProperties findFirstByValue(String value);
+
+    List<CustomProperties> findAllByCustomInsert(CustomInsert customInsert);
+
+
 }

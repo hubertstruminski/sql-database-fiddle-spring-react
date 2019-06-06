@@ -84,9 +84,6 @@ public class QueryService {
                     }
                 }
             }
-            if(splittedQueries[i].contains("SELECT")) {
-
-            }
         }
     }
 
@@ -147,6 +144,45 @@ public class QueryService {
     public void runUpdateQuery(String[] splittedQueries, int i, JdbcTemplate jdbcTemplate, String userName, String queryType, int index) {
         String query = processQuery(splittedQueries, i, jdbcTemplate, userName, queryType, index);
 
+        int setIndex = query.indexOf("SET");
+        int whereIndex = query.indexOf("WHERE");
+        String subQuery = query.substring(setIndex + 4, whereIndex - 1);
+        String[] splitSubQuery =subQuery.trim().split(",");
+
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        for(int j=0; j<splitSubQuery.length; j++) {
+            if(splitSubQuery[j].length() < 2) {
+                continue;
+            }
+            int indexSplitSubQuery = splitSubQuery[j].indexOf("=");
+            String field = splitSubQuery[j].substring(0, indexSplitSubQuery);
+            String value = splitSubQuery[j].substring(indexSplitSubQuery + 1);
+            fields.add(field);
+            values.add(value);
+        }
+
+
+
+        int startIndex = query.trim().indexOf("id=");
+        String id = query.substring(startIndex + 3);
+
+        CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
+        CustomInsert customInsert = customProperties.getCustomInsert();
+
+        List<CustomProperties> customPropertiesList = customPropertiesRepository.findAllByCustomInsert(customInsert);
+
+        for(int j=0; j<customPropertiesList.size(); j++) {
+            for(int k=0; k<fields.size(); k++) {
+                if(customPropertiesList.get(j).getField().equals(fields.get(k))) {
+                    customPropertiesList.get(j).setValue(values.get(k));
+                    customPropertiesRepository.save(customPropertiesList.get(j));
+                }
+            }
+
+        }
+
+
         Object[] array = algorithmForUpdateQuery(query);
         parseNumbers(array);
 
@@ -170,7 +206,7 @@ public class QueryService {
         }
 
         List<String> result = processColumnsFromCreateQuery(createTableQuery);
-        
+
         TableQuery tableQuery = saveTableQuery(tableName, user, tableNameBefore, createTableQuery, result);
         tableQueryRepository.save(tableQuery);
     }

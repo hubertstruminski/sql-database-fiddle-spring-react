@@ -12,7 +12,8 @@ class Board extends React.Component {
 
         this.state = {
             query: 'Write here your SQL query...',
-            isClickedButton: false
+            isClickedButton: false,
+            errors: {}
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmitRun = this.onSubmitRun.bind(this);
@@ -109,6 +110,7 @@ class Board extends React.Component {
 
 Board.propTypes = {
     query: PropTypes.string,
+    errors: PropTypes.object.isRequired,
     button: PropTypes.object.isRequired,
     getButtons: PropTypes.func.isRequired,
     table: PropTypes.array.isRequired
@@ -116,6 +118,7 @@ Board.propTypes = {
 
 const mapStateToProps = state => ({
     query: state.query,
+    errors: state.errors,
     button: state.button,
     table: state.table
 })

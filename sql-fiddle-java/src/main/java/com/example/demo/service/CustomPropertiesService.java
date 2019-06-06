@@ -66,4 +66,9 @@ public class CustomPropertiesService {
         }
         return FieldsAndValuesArray;
     }
+
+    public void update(String id) {
+        CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
+        customPropertiesRepository.save(customProperties);
+    }
 }
