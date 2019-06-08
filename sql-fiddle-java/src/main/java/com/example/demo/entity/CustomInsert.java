@@ -28,19 +28,7 @@ public class CustomInsert {
         this.id = id;
     }
 
-    public String getInsertQuery() {
-        return insertQuery;
-    }
-
     public void setInsertQuery(String insertQuery) {
         this.insertQuery = insertQuery;
-    }
-
-    public List<CustomProperties> getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(List<CustomProperties> customProperties) {
-        this.customProperties = customProperties;
     }
 }

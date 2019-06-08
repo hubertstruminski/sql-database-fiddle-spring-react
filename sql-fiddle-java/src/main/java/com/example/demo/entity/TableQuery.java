@@ -56,10 +56,6 @@ public class TableQuery {
         this.user = user;
     }
 
-    public String getSelectQuery() {
-        return selectQuery;
-    }
-
     public void setSelectQuery(String selectQuery) {
         this.selectQuery = selectQuery;
     }
@@ -78,10 +74,6 @@ public class TableQuery {
 
     public void setTableNameBefore(String tableNameBefore) {
         this.tableNameBefore = tableNameBefore;
-    }
-
-    public String getCreateQuery() {
-        return createQuery;
     }
 
     public void setCreateQuery(String createQuery) {

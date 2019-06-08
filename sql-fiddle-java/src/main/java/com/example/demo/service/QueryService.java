@@ -186,7 +186,7 @@ public class QueryService {
         jdbcTemplate.update(deleteQuery, params);
     }
 
-    public void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
+    private void saveTable(String tableName, String userName, String tableNameBefore, String createTableQuery) {
         TableQuery tableQueryByName = tableQueryRepository.findByBuildedName(tableName);
 
         if (tableQueryByName != null) {
@@ -342,7 +342,7 @@ public class QueryService {
         return splitInsertQuery[2];
     }
 
-    public void saveCustomProperties(String buildedTableName, String insertQuery, String[] fields, String[] values,
+    private void saveCustomProperties(String buildedTableName, String insertQuery, String[] fields, String[] values,
                                      User userByUserName) {
         TableQuery tableQuery = tableQueryRepository.findByBuildedName(buildedTableName);
 
@@ -413,7 +413,7 @@ public class QueryService {
         return tableQuery;
     }
 
-    public void updateCustomProperties(String query, List<String> fields, List<String> values) {
+    private void updateCustomProperties(String query, List<String> fields, List<String> values) {
         String id = getWhereClauseId(query);
 
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
@@ -437,7 +437,7 @@ public class QueryService {
         return id.trim();
     }
 
-    public void deleteEntities(String id) {
+    private void deleteEntities(String id) {
         CustomProperties customProperties = customPropertiesRepository.findFirstByValue(id);
         CustomInsert customInsert = customProperties.getCustomInsert();
 
@@ -451,5 +451,4 @@ public class QueryService {
         }
         customInsertRepository.delete(customInsert);
     }
-
 }

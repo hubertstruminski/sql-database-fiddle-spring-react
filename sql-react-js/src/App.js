@@ -43,7 +43,6 @@ function App() {
       <Router>
         <div className="App">
           <Header />
-
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />
 `         <Route exact path="/registration" component={Register} />
@@ -52,7 +51,6 @@ function App() {
           <Route exact path="/success" component={MessageSuccess} />
           
           <SecuredRoute exact path="/fiddle" component={Board} />
- 
         </div>
       </Router>
     </Provider>

@@ -82,16 +82,8 @@ public class CustomProperties {
         this.customInsert = customInsert;
     }
 
-    public Date getCreateAt() {
-        return createAt;
-    }
-
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
-    }
-
-    public TableQuery getTableQuery() {
-        return tableQuery;
     }
 
     public void setTableQuery(TableQuery tableQuery) {

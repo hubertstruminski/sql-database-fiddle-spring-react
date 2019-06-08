@@ -5,7 +5,6 @@ import com.example.demo.entity.CustomProperties;
 import com.example.demo.entity.TableQuery;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,4 @@ public interface CustomPropertiesRepository extends CrudRepository<CustomPropert
     @Modifying
     @Transactional
     void deleteByCustomInsert(CustomInsert customInsert);
-
-    void deleteByCustomInsertId(Long id);
 }
