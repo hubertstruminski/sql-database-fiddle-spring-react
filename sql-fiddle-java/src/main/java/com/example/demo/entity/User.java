@@ -52,10 +52,10 @@ public class User implements UserDetails {
     )
     private List<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
     List<TableQuery> tables;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
     List<CustomProperties> properties;
 
     public User() {
@@ -116,40 +116,16 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public boolean isActive() {
-        return isActive;
     }
 
     public void setActive(boolean active) {
         isActive = active;
     }
 
-    public Date getCreateAt() {
-        return createAt;
-    }
-
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
     }
 
     public void setRoles(List<Role> roles) {
@@ -162,14 +138,6 @@ public class User implements UserDetails {
 
     public void setMatchingPassword(String matchingPassword) {
         this.matchingPassword = matchingPassword;
-    }
-
-    public List<TableQuery> getTables() {
-        return tables;
-    }
-
-    public void setTables(List<TableQuery> tables) {
-        this.tables = tables;
     }
 
     @PrePersist

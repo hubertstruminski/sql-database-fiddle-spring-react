@@ -13,8 +13,7 @@ public class CustomInsert {
     @Column(name = "insert_query")
     private String insertQuery;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customInsert")
-    @Transient
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "customInsert", orphanRemoval = true)
     List<CustomProperties> customProperties;
 
     public CustomInsert() {
@@ -29,19 +28,7 @@ public class CustomInsert {
         this.id = id;
     }
 
-    public String getInsertQuery() {
-        return insertQuery;
-    }
-
     public void setInsertQuery(String insertQuery) {
         this.insertQuery = insertQuery;
-    }
-
-    public List<CustomProperties> getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(List<CustomProperties> customProperties) {
-        this.customProperties = customProperties;
     }
 }

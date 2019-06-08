@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -71,5 +72,11 @@ public class UserController {
 
         User newUser = userService.saveUser(userValidator);
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/message")
+    public ResponseEntity<?> passWelcomeRegistrationMessage() {
+        Boolean isRegisteredUser = true;
+        return new ResponseEntity<Boolean>(isRegisteredUser, HttpStatus.OK);
     }
 }

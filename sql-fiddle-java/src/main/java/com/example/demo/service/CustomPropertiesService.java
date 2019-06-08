@@ -24,8 +24,6 @@ public class CustomPropertiesService {
     @Autowired
     private CustomPropertiesRepository customPropertiesRepository;
 
-    private int index = 0;
-
     public String[][] getTable(Long id, String userName) {
         User userByUserName = userRepository.findByUserName(userName);
 
@@ -53,11 +51,11 @@ public class CustomPropertiesService {
         int columns = amountOfColumns;
 
         String[][] FieldsAndValuesArray = new String[rows + 1][columns];
-
+        int index = 0;
         for(int i=0; i<rows+1; i++) {
             if(i == 0) {
                 for(int j=0; j<columns; j++) {
-                    FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getField();
+                    FieldsAndValuesArray[i][j] = customPropertiesList.get(j).getField().toUpperCase();
                 }
                 continue;
             }

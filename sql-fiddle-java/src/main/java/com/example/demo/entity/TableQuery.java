@@ -27,12 +27,12 @@ public class TableQuery {
     @Column(name = "amount_columns")
     private int amountColumns;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tableQuery")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "tableQuery")
     @Transient
     private List<CustomProperties> customProperties;
 
@@ -56,10 +56,6 @@ public class TableQuery {
         this.user = user;
     }
 
-    public String getSelectQuery() {
-        return selectQuery;
-    }
-
     public void setSelectQuery(String selectQuery) {
         this.selectQuery = selectQuery;
     }
@@ -78,10 +74,6 @@ public class TableQuery {
 
     public void setTableNameBefore(String tableNameBefore) {
         this.tableNameBefore = tableNameBefore;
-    }
-
-    public String getCreateQuery() {
-        return createQuery;
     }
 
     public void setCreateQuery(String createQuery) {

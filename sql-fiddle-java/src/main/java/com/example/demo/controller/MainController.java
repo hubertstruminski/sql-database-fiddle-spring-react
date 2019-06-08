@@ -3,6 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.TableQuery;
 import com.example.demo.service.CustomPropertiesService;
+import com.example.demo.service.MapErrorValidator;
 import com.example.demo.service.QueryService;
 import com.example.demo.service.TableQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import java.security.Principal;
 @RestController
 @RequestMapping("fiddle")
 public class MainController {
+
+    @Autowired
+    private MapErrorValidator mapErrorValidator;
 
     @Autowired
     private QueryService queryService;
@@ -32,7 +36,6 @@ public class MainController {
     @PostMapping("/run")
     public ResponseEntity<?> processingQueries(@RequestBody String query, Principal principal) throws Exception {
         queryService.manageQueries(query, jdbcTemplate, principal.getName());
-
         return new ResponseEntity<String>("Query prcessed successfully.", HttpStatus.OK);
     }
 
@@ -53,5 +56,4 @@ public class MainController {
         String[][] table = customPropertiesService.getTable(id, principal.getName());
         return new ResponseEntity<String[][]>(table, HttpStatus.OK);
     }
-
 }

@@ -1,0 +1,28 @@
+CREATE TABLE users (
+	id INT,
+	name VARCHAR(220) NOT NULL,
+	surname VARCHAR(220) NOT NULL,
+	city VARCHAR(120) NOT NULL,
+	country VARCHAR(60) NOT NULL,
+	PRIMARY KEY(id)
+);
+
+INSERT INTO users (id, name, surname, city, country) VALUES (1, 'Hubert', 'Struminski', 'Sieradz', 'Polska');
+
+INSERT INTO users (id, name, surname, city, country) VALUES (2, 'Jan', 'Kowalski', 'Gdansk', 'Polska');
+
+INSERT INTO users (id, name, surname, city, country) VALUES (3, 'Piotr', 'Englert', 'Gdansk', 'Polska');
+
+
+CREATE TABLE role (
+	id INT,
+	name VARCHAR(60) NOT NULL,
+	PRIMARY KEY(id)
+);
+
+INSERT INTO role (id, name) VALUES (1, 'USER');
+INSERT INTO role (id, name) VALUES (2, 'ADMIN');
+
+UPDATE users SET city = 'Alesund' WHERE id = 1;
+
+DELETE FROM users WHERE id = 1;

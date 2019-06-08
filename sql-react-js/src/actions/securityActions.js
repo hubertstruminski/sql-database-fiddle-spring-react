@@ -5,8 +5,9 @@ import jwt_decode from 'jwt-decode';
 
 export const createNewUser = (userRegisterValidator, history) => async dispatch => {
     try {
-        const res = await axios.post("/register", userRegisterValidator);
-        // history.push("/login");
+        await axios.post("/register", userRegisterValidator);
+        history.push("/success");
+        
         dispatch({
             type: GET_ERRORS,
             payload: {}
@@ -34,7 +35,10 @@ export const login = invalidLoginResponse => async dispatch => {
             payload: decoded
         });
     } catch(error) {
-        console.log(error);
+        dispatch({
+            type: GET_ERRORS,
+            payload: error.response.data
+        });
     }
 };
 

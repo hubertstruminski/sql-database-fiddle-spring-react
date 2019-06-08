@@ -20,17 +20,17 @@ public class CustomProperties {
     @Column(name = "value")
     private String value;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "custom_insert_id")
     @JsonIgnore
     private CustomInsert customInsert;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "table_query_id")
     @JsonIgnore
     private TableQuery tableQuery;
@@ -82,16 +82,8 @@ public class CustomProperties {
         this.customInsert = customInsert;
     }
 
-    public Date getCreateAt() {
-        return createAt;
-    }
-
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
-    }
-
-    public TableQuery getTableQuery() {
-        return tableQuery;
     }
 
     public void setTableQuery(TableQuery tableQuery) {
