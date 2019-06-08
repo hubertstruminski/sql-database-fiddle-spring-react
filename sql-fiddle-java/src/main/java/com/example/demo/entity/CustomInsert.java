@@ -13,8 +13,7 @@ public class CustomInsert {
     @Column(name = "insert_query")
     private String insertQuery;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customInsert")
-    @Transient
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "customInsert", orphanRemoval = true)
     List<CustomProperties> customProperties;
 
     public CustomInsert() {

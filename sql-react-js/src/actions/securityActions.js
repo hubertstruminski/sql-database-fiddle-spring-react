@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { GET_ERRORS, SET_CURRENT_USER, GET_WELCOME_MESSAGE } from './types';
+import { GET_ERRORS, SET_CURRENT_USER } from './types';
 import setJWTToken from '../securityUtils/setJWTToken';
 import jwt_decode from 'jwt-decode';
 
 export const createNewUser = (userRegisterValidator, history) => async dispatch => {
     try {
-        const res = await axios.post("/register", userRegisterValidator);
+        await axios.post("/register", userRegisterValidator);
         history.push("/success");
         
         dispatch({

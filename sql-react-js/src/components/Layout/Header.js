@@ -58,6 +58,11 @@ class Header extends React.Component {
             <header>
                 <nav className="navbar navbar-expand-md navbar-dark bg-dark margin">
                     <Link to="/fiddle" className="navbar-brand">SQL Fiddle database</Link>
+                    <ul className="navbar-nav">
+                        <li>
+                            <Link to="/guide" className="nav-link">Guide</Link>
+                        </li>
+                    </ul>
                     {menu}
                 </nav>
             </header>

@@ -52,10 +52,10 @@ public class User implements UserDetails {
     )
     private List<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
     List<TableQuery> tables;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
     List<CustomProperties> properties;
 
     public User() {
