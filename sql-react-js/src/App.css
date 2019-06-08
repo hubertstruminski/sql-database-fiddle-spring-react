@@ -1,10 +1,10 @@
 .App {
   text-align: center;
-  height: 100vh;
-  background-color: #8ccbff;
+  min-height: 100vh;
+  background-image: url("light.png");
 }
 body {
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 .App-logo {
@@ -26,7 +26,9 @@ body {
 .margin {
   margin: 0;
 }
-
+.table-margin {
+  margin-bottom: 3%;
+}
 .App-link {
   color: #61dafb;
 }
@@ -40,7 +42,7 @@ body {
   }
 }
 .red {
-  background-color: red;
+ 
 }
 .flex-stretch {
 
@@ -68,27 +70,41 @@ body {
 }
 .txtArea
 {
-  width: 100%;
-  height: 100%;
-  color: #c8cdd1;
+  width: 98%;
+  height: 98%;
+  color: white;
   font-size: 20px;
   font-weight: 500;
   resize: none;
   margin-bottom: 2%;
+  background-color: #363D42;
+  border-radius: 10px;
+  padding: 1%;
 }
 .generatedButton {
   width: 60%;
   padding: 5%;
-  background-color: #3b9eed;
+  background-color:#363D42;
   border: 1px solid #073b66;
   font-size: 22px;
-  color: black;
+  color: white;
   border-radius: 25px;
+  margin-bottom: 2.5%;
+}
+.clearButton {
+  width: 60%;
+  padding: 5%;
+  background-color:rgb(147, 150, 153);
+  border: 1px solid #073b66;
+  font-size: 22px;
+  color: white;
+  border-radius: 25px;
+  margin-top: 2.5%;
 }
 .runButton {
   width: 20%;
   padding: 1%;
-  background-color: #073b66;
+  background-color: #363D42;
   color: white;
   position: relative;
   bottom: 1%;
@@ -96,3 +112,23 @@ body {
   border: none;
   border-radius: 25px;
 }
+.table-radius {
+  border-radius: 15px;
+}
+.img {
+  width: 100%;
+  height: 30%;
+  border: 2px solid black;
+  margin-bottom: 10%;
+}
+ul {
+  list-style-type: disc;
+  text-align: left;
+}
+.divGuide {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+

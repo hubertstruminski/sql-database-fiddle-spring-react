@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_ERRORS, DISPLAY_BUTTONS, DISPLAY_BUTTON } from './types';
+import { DISPLAY_BUTTONS, DISPLAY_BUTTON } from './types';
 
 export const getButtons = () => async dispatch => {
     const res = await axios.get("/fiddle/all");

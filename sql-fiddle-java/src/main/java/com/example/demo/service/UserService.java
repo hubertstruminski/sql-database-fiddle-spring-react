@@ -49,10 +49,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getUserByPasswordAndUsername(String password, String userName) {
-        return userRepository.getUserByPasswordAndUserName(password, userName);
-    }
-
     public User converFromUserValidator(UserRegisterValidator userValidator) {
         User user = new User();
 

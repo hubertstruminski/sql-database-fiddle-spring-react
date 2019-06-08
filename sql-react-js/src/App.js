@@ -1,8 +1,10 @@
 import React from 'react';
 import './App.css';
+import './light.png';
 import Header from './components/Layout/Header';
+import Guide from './components/Layout/Guide';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './components/UserManagement/Login';
 import Register from './components/UserManagement/Register';
 
@@ -15,6 +17,7 @@ import { SET_CURRENT_USER } from './actions/types';
 import { logout } from './actions/securityActions';
 import SecuredRoute from '../src/securityUtils/SecureRoute';
 import Board from './components/Board';
+import MessageSuccess from './components/Layout/MessageSuccess';
 
 const jwtToken = localStorage.jwtToken;
 
@@ -40,13 +43,14 @@ function App() {
       <Router>
         <div className="App">
           <Header />
-
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />
 `         <Route exact path="/registration" component={Register} />
+          <Route exact path="/guide" component={Guide} />
 
+          <Route exact path="/success" component={MessageSuccess} />
+          
           <SecuredRoute exact path="/fiddle" component={Board} />
- 
         </div>
       </Router>
     </Provider>

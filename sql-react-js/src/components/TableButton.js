@@ -14,6 +14,7 @@ class TableButton extends React.Component {
     }
 
     onSubmit(e) {
+        this.props.onSubmitClear();
         e.preventDefault();
         const id = this.props.button.id;
         this.props.setButtonProperties();

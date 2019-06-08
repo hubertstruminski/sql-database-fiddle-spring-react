@@ -15,8 +15,7 @@ class Register extends React.Component {
             firstName: '',
             lastName: '',
             email: '',
-            errors: {},
-            successfulWelcomeMessage: false
+            errors: {}
         }
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -43,12 +42,12 @@ class Register extends React.Component {
             lastName: this.state.lastName,
             email: this.state.email            
         }
-        this.setState({ successfulWelcomeMessage: true });
         this.props.createNewUser(userRegisterValidator, this.props.history);
     }
 
     render() {
         const { errors } = this.state
+
         return (
             <div className="container">
                 <div className="row">
@@ -56,10 +55,7 @@ class Register extends React.Component {
                         <div className="card card-signin my-5">
                             <div className="card-body">
                                 <h5 className="card-title text-center">Sign Up</h5>
-                                <hr className="my-4" />
-
-                                <ShowSuccessfulRegistrationMessage successfulWelcomeMessage={this.state.successfulWelcomeMessage} />
-                                
+                                <hr className="my-4" />    
                                 <form onSubmit={this.onSubmit} className="form-signin">
                                     <div className="form-label-group">
                                         <input 
@@ -181,9 +177,13 @@ class Register extends React.Component {
                                         }
                                         <label htmlFor="email">Email</label>
                                     </div>
-
                                     <hr className="my-4" />
-                                    <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign up</button>
+                                    <button 
+                                        className="btn btn-lg btn-primary btn-block text-uppercase" 
+                                        type="submit"
+                                    >
+                                        Sign up
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -192,13 +192,6 @@ class Register extends React.Component {
             </div>
         );
     }
-}
-
-function ShowSuccessfulRegistrationMessage(props) {
-    if(props.successfulWelcomeMessage) {
-        return <div className="alert alert-success">User has been registered successfully</div>;
-    }
-    return null;
 }
 
 Register.propTypes = {

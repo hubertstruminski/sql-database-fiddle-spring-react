@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_ERRORS, GET_TABLE } from './types';
+import { GET_TABLE } from './types';
 
 export const getTable = (id, history) => async dispatch => {
     const res = await axios.get(`/fiddle/table/${id}`);

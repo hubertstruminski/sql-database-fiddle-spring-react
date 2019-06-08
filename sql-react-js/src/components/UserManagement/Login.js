@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { login } from '../../actions/securityActions';
 
+
 class Login extends React.Component {
     constructor() {
         super();
@@ -49,6 +50,7 @@ class Login extends React.Component {
 
     render() {
         const { errors } = this.state;
+
         return (
             <div className="box">
                 <div className="container">
@@ -58,6 +60,7 @@ class Login extends React.Component {
                                 <div className="card-body">
                                     <h5 className="card-title text-center">Sign In</h5>
                                     <hr className="my-4" />
+
                                     <form onSubmit={this.onSubmit} className="form-signin">
                                         <div className="form-label-group">
                                             <input 

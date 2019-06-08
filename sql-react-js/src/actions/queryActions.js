@@ -3,7 +3,6 @@ import { GET_ERRORS, PROCESS_QUERY } from './types';
 
 export const processQueries = (query, history) => async dispatch => {
     try {
-        console.log(query);
         await axios.post("/fiddle/run", query);
         history.push("/fiddle");
 
