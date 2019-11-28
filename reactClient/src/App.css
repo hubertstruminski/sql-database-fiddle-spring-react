@@ -1,0 +1,134 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-image: url("light.png");
+}
+body {
+  /* overflow-y: hidden; */
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.margin {
+  margin: 0;
+}
+.table-margin {
+  margin-bottom: 3%;
+}
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.red {
+ 
+}
+.flex-stretch {
+
+  height: 100%;
+
+}
+.smallClass {
+  width: 15%;
+  float: left;
+  margin: 0; 
+  height: 100%;
+  
+}
+.mediumClass {
+  width: 35%;
+  float: left;
+  margin: 0;
+  height: 100%;
+}
+.largeClass {
+  width: 50%;
+  float: left;
+  margin: 0;
+  height: 100%;
+}
+.txtArea
+{
+  width: 98%;
+  height: 98%;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  resize: none;
+  margin-bottom: 2%;
+  background-color: #363D42;
+  border-radius: 10px;
+  padding: 1%;
+}
+.generatedButton {
+  width: 60%;
+  padding: 5%;
+  background-color:#363D42;
+  border: 1px solid #073b66;
+  font-size: 22px;
+  color: white;
+  border-radius: 25px;
+  margin-bottom: 2.5%;
+}
+.clearButton {
+  width: 60%;
+  padding: 5%;
+  background-color:rgb(147, 150, 153);
+  border: 1px solid #073b66;
+  font-size: 22px;
+  color: white;
+  border-radius: 25px;
+  margin-top: 2.5%;
+}
+.runButton {
+  width: 20%;
+  padding: 1%;
+  background-color: #363D42;
+  color: white;
+  position: relative;
+  bottom: 1%;
+  left: 35%;
+  border: none;
+  border-radius: 25px;
+}
+.table-radius {
+  border-radius: 15px;
+}
+.img {
+  width: 100%;
+  height: 30%;
+  border: 2px solid black;
+  margin-bottom: 10%;
+}
+ul {
+  list-style-type: disc;
+  text-align: left;
+}
+.divGuide {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+
